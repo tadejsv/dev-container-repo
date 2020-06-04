@@ -1,7 +1,11 @@
-FROM ubuntu:20.04
+ARG UBUNTU_VERSION=18.04
+ARG CUDA=10.1
+FROM nvidia/cuda:${CUDA}-cudnn7-runtime-ubuntu${UBUNTU_VERSION}
 
-ARG PYTHON_VERSION=3.8
+# Prepare shell
 ENV PATH /opt/conda/bin:$PATH
+ENV SHELL /bin/bash
+SHELL ["/bin/bash", "-c"]
 
 # For tzdata shit
 ARG DEBIAN_FRONTEND=noninteractive
@@ -20,30 +24,36 @@ RUN apt-get update && \
      apt-get install nodejs -y --no-install-recommends && \
      rm -rf /var/lib/apt/lists/*
 
-# Install all python stuff, including Pytorch and Pytorch Lightning
+ARG PYTHON_VERSION=3.8
+
+# Install all python stuff, including Pytorch and TF related libraries
 RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
      chmod +x ~/miniconda.sh && \
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh && \
      conda config --system --prepend channels conda-forge && \
+     # Install basic python stuff
      conda install -y \ 
-          python=$PYTHON_VERSION \
+          "python>=$PYTHON_VERSION" \
+          "pip>=2.1" \
           pandas \ 
           mkl mkl-include \
           scipy \
           scikit-learn \
-          matplotlib \
+          seaborn \
           jupyterlab \
           ipywidgets \
           widgetsnbextension && \
-     conda install pytorch torchvision cudatoolkit=10.2 -y -c pytorch-nightly && \
-     pip install https://github.com/PytorchLightning/pytorch-lightning/archive/master.zip --upgrade && \
-     conda clean -yaf && \
+     # Install TF
+     pip install tensorflow && \
+     # Enable jupyter extensions
      jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
      jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
      jupyter labextension install @jupyterlab/toc --no-build && \
      jupyter lab build && \
-     npm cache clean --force 
+     # Some cleanup
+     npm cache clean --force && \
+     conda clean -yaf && pip cache purge
 
 # Open ports for Jupyter and Tensorboard
 EXPOSE 8888 6006
@@ -54,7 +64,6 @@ RUN jupyter notebook --generate-config
 COPY jupyter_notebook_config.py $HOME/.jupyter/
 
 # Setup file system
-SHELL ["/bin/bash", "-c"]
 RUN mkdir $HOME/project
 WORKDIR $HOME/project
 
