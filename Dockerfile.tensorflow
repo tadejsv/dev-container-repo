@@ -7,24 +7,19 @@ ENV PATH /opt/conda/bin:$PATH
 ENV SHELL /bin/bash
 SHELL ["/bin/bash", "-c"]
 
-# For tzdata shit
-ARG DEBIAN_FRONTEND=noninteractive
-
 # Install all system stuff, including node
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-         build-essential \
-         cmake \
-         git \
-         curl \
-         ca-certificates \
-         libjpeg-dev \
-         libpng-dev && \
+         $(cat sys_requirements.txt) && \
      curl -sL https://deb.nodesource.com/setup_14.x | bash -E - && \
      apt-get install nodejs -y --no-install-recommends && \
      rm -rf /var/lib/apt/lists/*
 
+# Prepare python requirements file
 ARG PYTHON_VERSION=3.8
+COPY py_requirements.txt /
+RUN sed -i "s/\$PYTHON_VERSION/$PYTHON_VERSION/g" py_requirements.txt
 
 # Install all python stuff, including Pytorch and TF related libraries
 RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
@@ -33,17 +28,7 @@ RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest
      rm ~/miniconda.sh && \
      conda config --system --prepend channels conda-forge && \
      # Install basic python stuff
-     conda install -y \ 
-          "python>=$PYTHON_VERSION" \
-          "pip>=2.1" \
-          pandas \ 
-          mkl mkl-include \
-          scipy \
-          scikit-learn \
-          seaborn \
-          jupyterlab \
-          ipywidgets \
-          widgetsnbextension && \
+     conda install -y --file py_requirements.txt && \
      # Install TF
      pip install tensorflow && \
      # Enable jupyter extensions
@@ -71,6 +56,5 @@ WORKDIR $HOME/project
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 COPY start-dev.sh /start-dev.sh
-RUN chmod +x /start-dev.sh
-RUN chmod +x /tini
+RUN chmod +x /start-dev.sh && chmod +x /tini
 ENTRYPOINT ["/tini", "-g", "--", "/start-dev.sh"]

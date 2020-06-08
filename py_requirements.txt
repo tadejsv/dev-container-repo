@@ -1,0 +1,14 @@
+python>=$PYTHON_VERSION
+pip>=2.1
+pandas
+mkl 
+mkl-include
+scipy
+scikit-learn
+seaborn
+jupyterlab
+ipywidgets
+widgetsnbextension
+tqdm
+h5py
+Pillow
