@@ -9,7 +9,7 @@ These are [easy to use](#quickstart) Ubuntu Docker images that come with [everyt
 2. [Quickstart](#quickstart)
     - [Start Jupyter Lab/Notebook](#start-jupyter-lab/notebook)
     - [Run a script](#run-a-script)
-4. [Specs and versions](#spec-and-versions)
+4. [Specs and versions](#specs-and-versions)
 5. [Extending the container](#extending-the-container)
     - [Creating a new image](#creating-a-new-image)
     - [Installing with pip](#installing-with-pip)
@@ -23,7 +23,7 @@ And that's it! No need to install CUDA or anything else, the images takes care o
 
 ## Quickstart
 
-There are two ways to start the container (let's assume it's the `pytorch` container), depending on what you want to do:
+There are two ways to start the container (let's assume it's the `pytorch` container, but you could use [other versions](#specs-and-versions) too), depending on what you want to do:
 
 1. [Start Jupyter Lab/Notebook](#start-jupyter-lab/notebook)
 2. [Run a script](#run-a-script)
@@ -33,7 +33,7 @@ There are two ways to start the container (let's assume it's the `pytorch` conta
 To start the container, `cd` into the directory from which you want to work and execute the command
 
 ```
-docker run --rm -d --name <NAME> --gpus all --ipc="host" -p 8888:8888 -v "$(pwd)":/root/project tadejsv/ml-docker:pytorch
+docker run --rm -d --name <NAME> --gpus all --ipc="host" --user $(id -u) -p 8888:8888 -v "$(pwd)":/home/mount tadejsv/ml-docker:pytorch
 ```
 This command will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888).
 
@@ -43,8 +43,9 @@ Let's break down what the options here do:
 - `--name <NAME>` sets the name of the container. Then you can stop it with `docker stop <NAME>`, without having to fetch the id.
 - `--gpus all` gives the container access to the GPUs of your machine.
 - `--ipc="host"` is needed for `pytorch`, because Docker limits shared memory for processes to only 64MB by default -- and if you will be loading/processing images with multiple workers, this will not be enough. Alternatively, you could adjust `shm-size`.
+- `--user $(id -u)` runs the container as the current user on your machine - so you can access any documents that the container creates.
 - `-p 8888:8888` binds the container's 8888 port (where Jupyter will be listening) to port 8888 on your machine. 
-- `-v "$(pwd)":/root/project` creates a bind mount from the currend directory on your machine to the container's working directory. This gives the container the ability to read and write in the current directory on your system.  
+- `-v "$(pwd)":/home/mount` creates a bind mount from the currend directory on your machine to the container's mount directory. This gives the container the ability to read and write in the current directory on your system.  
 
 Since the container will be running in the background, you can use `docker logs` to view the output while it is running. If you want use bash inside the container it's probably easiest to open a terminal in Jupyter Lab, but you could use `docker exec` as well.
 
@@ -74,12 +75,17 @@ to the [default command](#start-jupyter-lab/notebook). This will simply start ru
 
 ## Specs and versions
 
-There are three different versions of the container:
-- [`pytorch`]() comes with Pytorch, as well as torchvision, ignite and Pytorch Lightning installed.
-- [`tf`]() comes with Tensorflow (v2) installed.
-- [`boost`]() comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost).
+There are 4 different versions of the images (size means size when extracted):
 
-All 3 containers already come with CUDA toolkit libraries preinstalled. They all use [conda](https://docs.conda.io/en/latest/conda.html) (miniconda) for python distribution and package management, and come with the following packages installed:
+| Name | Size | Description |
+| ---- | ---- | ----------- |
+| [`eda`]() |  | comes with just the basic python packages installed. As the name suggests, it's good for Exploratory Data Analysis |
+| [`pytorch`]() | | comes with Pytorch, as well as torchvision, ignite and Pytorch Lightning installed. |
+| [`tf`]() | | comes with Tensorflow (v2) installed. |
+| [`boost`]() | | comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). |
+
+// NEEDS WORK
+All the images already come with CUDA toolkit libraries preinstalled. They all use [conda](https://docs.conda.io/en/latest/conda.html) (miniconda) for python distribution and package management, and come with the following packages installed:
 - numpy and pandas
 - scipy
 - scikit-learn
@@ -89,6 +95,8 @@ All 3 containers already come with CUDA toolkit libraries preinstalled. They all
 
 
 ## Extending the image
+
+You can extend the image in two 
 
 ### Creating a new image
 
@@ -111,7 +119,6 @@ You can then build your image and upload it to DockerHub. You would then run the
 
 - Create a TensorBoard image and intergrate with Docker compose
 - Make sure TF works properly (including profiling etc)
-- Make the container not run as root
 - Split into many images and use multi-stage build to patch together (for Pytorch, TF, Catboost, LGBM...)
 - Improve security?
 - Remove pytorch-nightly and dev version of TL when torch hits 1.6.0 and TL 0.8.0.

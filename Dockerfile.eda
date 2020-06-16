@@ -1,71 +1,62 @@
 ARG UBUNTU_VERSION=18.04
-ARG CUDA=10.2
-FROM nvidia/cuda:${CUDA}-cudnn7-runtime-ubuntu${UBUNTU_VERSION}
+FROM ubuntu:${UBUNTU_VERSION}
 
-# Prepare shell
+# Prepare shell and file system
 ENV PATH /opt/conda/bin:$PATH
+ENV HOME /home
 ENV SHELL /bin/bash
 SHELL ["/bin/bash", "-c"]
 
 # Install all system stuff, including node
 ARG DEBIAN_FRONTEND=noninteractive
+COPY sys_requirements.txt /
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
          $(cat sys_requirements.txt) && \
-         nvidia-opencl-dev \
-         opencl-headers \
-         libboost-dev \
-         libboost-system-dev \
-         libboost-filesystem-dev && \
      curl -sL https://deb.nodesource.com/setup_14.x | bash -E - && \
      apt-get install nodejs -y --no-install-recommends && \
-     rm -rf /var/lib/apt/lists/*
+     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Prepare python requirements file
-ARG PYTHON_VERSION=3.8
+ENV PYTHON_VERSION=3.8
 COPY py_requirements.txt /
 RUN sed -i "s/\$PYTHON_VERSION/$PYTHON_VERSION/g" py_requirements.txt
 
-# Install all python stuff, including Pytorch and TF related libraries
+# Install all python stuff, Jupyter with extensions included
 RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
      chmod +x ~/miniconda.sh && \
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh && \
-     conda config --system --prepend channels conda-forge && \
-     # Install basic python stuff
-     conda install -y --file py_requirements.txt && \
-     # Install catboost
-     conda install catboost && \
-     # Install h20
-     conda install -c h2oai h2o && \
-     # Install XGBoost
-     pip install xgboost && \
+     conda config --system --prepend channels conda-forge && conda config --set always_yes yes &&\
+     # Install basic python stuff (second line to prevent installation of old node)
+     conda install --file py_requirements.txt && \
+     conda install jupyterlab_code_formatter --no-deps && \
      # Enable jupyter extensions
-     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
      jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
      jupyter labextension install @jupyterlab/toc --no-build && \
+     jupyter labextension install @ryantam626/jupyterlab_code_formatter --no-build && \
+     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \ 
+     jupyter serverextension enable --py jupyterlab_code_formatter --sys-prefix && \
      jupyter lab build && \
      # Some cleanup
-     npm cache clean --force && pip cache purge && \
+     npm cache clean --force && \
      conda clean -yaf
-
-# Install LGBM - god help us
 
 # Open ports for Jupyter and Tensorboard
 EXPOSE 8888 6006
 
 # Transfer Jupyter settings and main script
-ENV HOME /root
 RUN jupyter notebook --generate-config
 COPY jupyter_notebook_config.py $HOME/.jupyter/
+RUN chmod -R a+rwx $HOME 
 
-# Setup file system
-RUN mkdir $HOME/project
-WORKDIR $HOME/project
+# Prepare mount folder
+RUN mkdir $HOME/mount
+WORKDIR $HOME/mount
 
 # Prepare entrypoint
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 COPY entrypoint.sh /
-RUN chmod +x /start-dev.sh && chmod +x /tini
+RUN chmod +x /entrypoint.sh && chmod +x /tini
 ENTRYPOINT ["/tini", "-g", "--", "/entrypoint.sh"]

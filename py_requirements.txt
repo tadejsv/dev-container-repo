@@ -9,6 +9,9 @@ seaborn
 jupyterlab
 ipywidgets
 widgetsnbextension
+black
+autopep8
+isort
 tqdm
 h5py
 Pillow
