@@ -1,9 +1,10 @@
 # 🐋🔥 ML Docker containers
 
-| Available on [DockerHub](#https://hub.docker.com/repository/docker/tadejsv/ml-docker) |
------------------- 
+<a href="https://hub.docker.com/repository/docker/tadejsv/ml-docker" alt="Docker hub"><img src="https://img.shields.io/docker/pulls/tadejsv/ml-docker?style=for-the-badge"/></a>
 
 These are [easy to use](#quickstart) Ubuntu Docker images that come with [everything you need](#specs-and-versions) for machine learning - full GPU (CUDA) support included! And if there's a package you're missing, it's very easy to [extend the container](#extending-the-container).
+
+Availible on [Docker Hub](#https://hub.docker.com/repository/docker/tadejsv/ml-docker)
 
 1. [Installation](#installation)
 2. [Quickstart](#quickstart)
