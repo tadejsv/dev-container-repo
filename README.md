@@ -83,10 +83,10 @@ There are 4 different versions of the images (size means size when extracted):
 
 | Name | Size | Description |
 | ---- | ---- | ----------- |
-| [`eda`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.eda) | 2.63 GB | Based on [`10.1-base-ubuntu18.04`](#https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/base/Dockerfile) CUDA image. Uses conda, and comes the following packages installed: <ul><li>numpy, pandas and scipy</li><li>matplotlib and seaborn</li><li>scikit-learn and Pillow</li><li>Jupyter lab + TOC and code formatter extensions (with isort, black and autopep8 formatters)</li></ul>|
+| [`eda`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.eda) | 2.63 GB | Based on [`10.1-base-ubuntu18.04`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/base/Dockerfile) CUDA image. Uses conda, and comes the following packages installed: <ul><li>numpy, pandas and scipy</li><li>matplotlib and seaborn</li><li>scikit-learn and Pillow</li><li>Jupyter lab + TOC and code formatter extensions (with isort, black and autopep8 formatters)</li></ul>|
 | [`pytorch`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.pytorch) | 4.91 GB| based on `eda`, comes with pytorch (with its own CUDA), torchvision and pytorch-lightning installed. |
 | [`tf`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.tensorflow) | 5.79 GB | based on `eda`, comes with tensorflow installed (CUDA installed system-wide) |
-| [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) | 5.78 GB | based on `eda`, comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). CUDA installed up to [`devel`](#https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/devel/Dockerfile) level. |
+| [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) | 5.78 GB | based on `eda`, comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). CUDA installed up to [`devel`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/devel/Dockerfile) level. |
 
 ## Extending the image
 
@@ -99,7 +99,7 @@ You can extend the image in two ways, depending what you need:
 
 This method is more complicated, but will save you time in the long run, especially if the installation is more involved, or if it's something you use a lot.
 
-As an example, say that you want to add [fairseq](#https://github.com/pytorch/fairseq) to the `pytorch` image. Following the instructions, your Dockerfile would like like this:
+As an example, say that you want to add [fairseq](https://github.com/pytorch/fairseq) to the `pytorch` image. Following the instructions, your Dockerfile would like like this:
 
 ``` docker
 FROM tadejsv/ml-docker:pytorch
@@ -118,11 +118,11 @@ You would then build this image, and run it exactly like the `pytorch` one.
 
 If you attempt to install anything that requires CUDA, things could get messy. For example, pytorch installs its own CUDA toolkit, which can not be used with other programs. This means you'd have to install CUDA yourself.
 
-Luckily, this isn't that hard. The images are based on [ `10.1-base-ubuntu18.04` ](https://hub.docker.com/r/nvidia/cuda/) docker CUDA image, which means you can "upgrade" them to runtime or development CUDA pretty easy - just paste together the [extra commands](#https://gitlab.com/nvidia/container-images/cuda/-/tree/master/dist/ubuntu18.04/10.2) from these images -- see the `boost` dockerfile. This will add a few GB to your images.
+Luckily, this isn't that hard. The images are based on [ `10.1-base-ubuntu18.04` ](https://hub.docker.com/r/nvidia/cuda/) docker CUDA image, which means you can "upgrade" them to runtime or development CUDA pretty easy - just paste together the [extra commands](https://gitlab.com/nvidia/container-images/cuda/-/tree/master/dist/ubuntu18.04/10.2) from these images -- see the `boost` dockerfile. This will add a few GB to your images.
 
 ### Installing with pip
 
-If all you need to do is to install a package or two, you can just add a line at the beginning of your notebook/script. For example, if you need the [albumenations](#https://github.com/albumentations-team/albumentations) package in your notebook, you'd add this line at the beginning:
+If all you need to do is to install a package or two, you can just add a line at the beginning of your notebook/script. For example, if you need the [albumenations](https://github.com/albumentations-team/albumentations) package in your notebook, you'd add this line at the beginning:
  
 ``` 
 ! pip install albumentations
