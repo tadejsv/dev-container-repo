@@ -1,29 +1,28 @@
-# 🐋🔥 ML Docker containers 
+# 🐋🔥 ML Docker containers
 
-[![Python](https://img.shields.io/docker/automated/tadejsv/ml-docker?style=for-the-badge)](https://hub.docker.com/r/tadejsv/ml-docker)
+| Available on [DockerHub](#https://hub.docker.com/repository/docker/tadejsv/ml-docker) |
+------------------ 
 
-These are [easy to use](#quickstart) Ubuntu Docker images that come with [everything you need](#specs-and-versions) for machine learning - full GPU/CUDA support included! And if there's a package you're missing, it's very easy to [extend the container](#extending-the-container).
-
+These are [easy to use](#quickstart) Ubuntu Docker images that come with [everything you need](#specs-and-versions) for machine learning - full GPU (CUDA) support included! And if there's a package you're missing, it's very easy to [extend the container](#extending-the-container).
 
 1. [Installation](#installation)
 2. [Quickstart](#quickstart)
     - [Start Jupyter Lab/Notebook](#start-jupyter-lab/notebook)
     - [Run a script](#run-a-script)
-4. [Specs and versions](#specs-and-versions)
-5. [Extending the container](#extending-the-container)
+3. [Specs and versions](#specs-and-versions)
+4. [Extending the image](#extending-the-image)
     - [Creating a new image](#creating-a-new-image)
     - [Installing with pip](#installing-with-pip)
 
-
 ## Installation
 
-First, make sure you have [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx), [docker](https://docs.docker.com/engine/install/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker) installed. The images use CUDA 10.1 (`tf`) or 10.2 (`pytorch` and `boost`), so try to select the most current drivers.
+First, make sure you have [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx), [docker](https://docs.docker.com/engine/install/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker) installed. The images use CUDA 10.1 ( `tf` ) or 10.2 ( `pytorch` and `boost` ), so try to select the most current drivers.
 
 And that's it! No need to install CUDA or anything else, the images takes care of that. Also, no need to download the image before running, `docker run` will download it, if it doesn't already exist. You only need to use `docker pull` if you want to update the images.
 
 ## Quickstart
 
-There are two ways to start the container (let's assume it's the `pytorch` container, but you could use [other versions](#specs-and-versions) too), depending on what you want to do:
+There are two ways to start the container (in the example for the `pytorch` image), depending on what you want to do:
 
 1. [Start Jupyter Lab/Notebook](#start-jupyter-lab/notebook)
 2. [Run a script](#run-a-script)
@@ -32,20 +31,22 @@ There are two ways to start the container (let's assume it's the `pytorch` conta
 
 To start the container, `cd` into the directory from which you want to work and execute the command
 
+``` bash
+docker run --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch
 ```
-docker run --rm -d --name <NAME> --gpus all --ipc="host" --user $(id -u) -p 8888:8888 -v "$(pwd)":/home/mount tadejsv/ml-docker:pytorch
-```
+
 This command will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888).
 
 Let's break down what the options here do:
-- `--rm` removes the container after it exits. If you want to inspect container's logs after it exits, remove this part.
-- `-d` makes it run in the background. 
-- `--name <NAME>` sets the name of the container. Then you can stop it with `docker stop <NAME>`, without having to fetch the id.
-- `--gpus all` gives the container access to the GPUs of your machine.
-- `--ipc="host"` is needed for `pytorch`, because Docker limits shared memory for processes to only 64MB by default -- and if you will be loading/processing images with multiple workers, this will not be enough. Alternatively, you could adjust `shm-size`.
-- `--user $(id -u)` runs the container as the current user on your machine - so you can access any documents that the container creates.
-- `-p 8888:8888` binds the container's 8888 port (where Jupyter will be listening) to port 8888 on your machine. 
-- `-v "$(pwd)":/home/mount` creates a bind mount from the currend directory on your machine to the container's mount directory. This gives the container the ability to read and write in the current directory on your system.  
+
+* `--rm` removes the container after it exits. If you want to inspect container's logs after it exits, remove this part.
+* `-d` makes it run in the background. 
+* `--name alba` names the container `alba` - then you can stop it with `docker stop alba` .
+* `--gpus all` gives the container access to the GPUs of your machine.
+* `--ipc=host` is needed for `pytorch` , because Docker limits shared memory for processes to only 64MB by default -- and if you will be loading/processing images with multiple workers, this will not be enough. Alternatively, you could adjust `shm-size` .
+* `-u $(id -u)` runs the container as the current user on your machine - so you can access any documents that the container creates.
+* `-p 8888:8888` binds the container's 8888 port (where Jupyter will be listening) to port 8888 on your machine. 
+* `-v "$(pwd)":/workspace` creates a bind mount from the currend directory on your machine to the container's mount directory. This gives the container the ability to read and write in the current directory on your system.  
 
 Since the container will be running in the background, you can use `docker logs` to view the output while it is running. If you want use bash inside the container it's probably easiest to open a terminal in Jupyter Lab, but you could use `docker exec` as well.
 
@@ -57,20 +58,22 @@ If you wish to start Jupyter Notebook instead of Jupyter Lab (which you need to 
 
 #### Jupyter password
 
-The default password is `getrekt`. You can create a new password following the steps [here](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#preparing-a-hashed-password), and then change it by passing a command line argument
+The default password is `getrekt` . You can create a new password following the steps [here](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#preparing-a-hashed-password), and then change it by passing a command line argument
 
 ```
 --NotebookApp.password='<NEW_PASSWORD>'
 ```
+
 to the [default command](#start-jupyter-lab/notebook).
 
 ### Run a script
 
 If you want to run a `.py` or `.sh` script, you would add
 
-```
+```bash
 my_script.py arg1 arg2
 ```
+
 to the [default command](#start-jupyter-lab/notebook). This will simply start running your script, and will not start Jupyter Lab.
 
 ## Specs and versions
@@ -79,47 +82,54 @@ There are 4 different versions of the images (size means size when extracted):
 
 | Name | Size | Description |
 | ---- | ---- | ----------- |
-| [`eda`]() |  | comes with just the basic python packages installed. As the name suggests, it's good for Exploratory Data Analysis |
-| [`pytorch`]() | | comes with Pytorch, as well as torchvision, ignite and Pytorch Lightning installed. |
-| [`tf`]() | | comes with Tensorflow (v2) installed. |
-| [`boost`]() | | comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). |
-
-// NEEDS WORK
-All the images already come with CUDA toolkit libraries preinstalled. They all use [conda](https://docs.conda.io/en/latest/conda.html) (miniconda) for python distribution and package management, and come with the following packages installed:
-- numpy and pandas
-- scipy
-- scikit-learn
-- matplotlib and seaborn
-- Jupyter lab (with widgets enabled) + TOC extension
-
-
+| [`eda`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.eda) | 2.63 GB | Based on [`10.1-base-ubuntu18.04`](#https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/base/Dockerfile) CUDA image. Uses conda, and comes the following packages installed: <ul><li>numpy, pandas and scipy</li><li>matplotlib and seaborn</li><li>scikit-learn and Pillow</li><li>Jupyter lab + TOC and code formatter extensions (with isort, black and autopep8 formatters)</li></ul>|
+| [`pytorch`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.pytorch) | 4.91 GB| based on `eda`, comes with pytorch (with its own CUDA), torchvision and pytorch-lightning installed. |
+| [`tf`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.tensorflow) | 5.79 GB | based on `eda`, comes with tensorflow installed (CUDA installed system-wide) |
+| [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) | 5.78 GB | based on `eda`, comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). CUDA installed up to [`devel`](#https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/devel/Dockerfile) level. |
 
 ## Extending the image
 
-You can extend the image in two 
+You can extend the image in two ways, depending what you need:
+
+1. [Create a new image](#creating-a-new-image): if you want to install packages you will use often and/or are hard (take a long time) to install.
+2. [Install with pip](#installing-with-pip): if you have just a few small packages to install, or if you just need to try something once.
 
 ### Creating a new image
 
-This container contains only the "base" packages. If you need to install other packages, you can do so easily by creating a new image based off this one. For example, if you need to install the Albumenations package, your dockerfile would look like
+This method is more complicated, but will save you time in the long run, especially if the installation is more involved, or if it's something you use a lot.
 
-```docker
+As an example, say that you want to add [fairseq](#https://github.com/pytorch/fairseq) to the `pytorch` image. Following the instructions, your Dockerfile would like like this:
+
+``` docker
 FROM tadejsv/ml-docker:pytorch
 
-RUN conda install albumenations && \
-    conda clean -yaf
+# Install fairseq
+RUN cd / && git clone https://github.com/pytorch/fairseq && \
+    cd fairseq && \
+    pip install --editable ./ && \
+    pip install fastBPE sacremoses subword_nmt && \
+    rm -rf /home/.cache
 ```
 
-You can then build your image and upload it to DockerHub. You would then run the container exactly like this one, just replacing `tadejsv/ml-docker:pytorch` with the name of your image!
+You would then build this image, and run it exactly like the `pytorch` one.
+
+#### Using CUDA
+
+If you attempt to install anything that requires CUDA, things could get messy. For example, pytorch installs its own CUDA toolkit, which can not be used with other programs. This means you'd have to install CUDA yourself.
+
+Luckily, this isn't that hard. The images are based on [ `10.1-base-ubuntu18.04` ](https://hub.docker.com/r/nvidia/cuda/) docker CUDA image, which means you can "upgrade" them to runtime or development CUDA pretty easy - just paste together the [extra commands](#https://gitlab.com/nvidia/container-images/cuda/-/tree/master/dist/ubuntu18.04/10.2) from these images -- see the `boost` dockerfile. This will add a few GB to your images.
 
 ### Installing with pip
 
-
+If all you need to do is to install a package or two, you can just add a line at the beginning of your notebook/script. For example, if you need the [albumenations](#https://github.com/albumentations-team/albumentations) package in your notebook, you'd add this line at the beginning:
+ 
+``` 
+! pip install albumentations
+```
 
 ## TODO
 
-- Create a TensorBoard image and intergrate with Docker compose
-- Make sure TF works properly (including profiling etc)
-- Split into many images and use multi-stage build to patch together (for Pytorch, TF, Catboost, LGBM...)
-- Improve security?
-- Remove pytorch-nightly and dev version of TL when torch hits 1.6.0 and TL 0.8.0.
-- Up the CUDA version to 10.2 once TF starts supporting it.
+* Create a TensorBoard image and intergrate with Docker compose
+* Write tests
+* Remove pytorch-nightly  when torch hits 1.6.0.
+* Up the CUDA version to 10.2 once TF starts supporting it.

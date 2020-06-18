@@ -2,6 +2,6 @@ FROM tadejsv/ml-docker:eda
 
 # Install pytorch
 RUN  conda install pytorch torchvision cudatoolkit=10.2 -y -c pytorch-nightly && \
-     pip install https://github.com/PytorchLightning/pytorch-lightning/archive/master.zip --upgrade && \
+     conda install pytorch-lightning && \
      # Some cleanup
-     conda clean -yaf && pip cache purge
+     conda clean -yaf && rm -rf /home/.cache
