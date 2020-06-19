@@ -20,7 +20,7 @@ Availible on [Docker Hub](https://hub.docker.com/repository/docker/tadejsv/ml-do
 
 ## Installation
 
-First, make sure you have [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx), [docker](https://docs.docker.com/engine/install/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker) installed. The images use CUDA 10.1 ( `tf` ) or 10.2 ( `pytorch` and `boost` ), so try to select the most current drivers.
+First, make sure you have [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx) (>= 418.39), [docker](https://docs.docker.com/engine/install/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker) installed.
 
 And that's it! No need to install CUDA or anything else, the images takes care of that. Also, no need to download the image before running, `docker run` will download it, if it doesn't already exist. You only need to use `docker pull` if you want to update the images.
 
