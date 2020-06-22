@@ -7,7 +7,7 @@ These are [easy to use](#quickstart) Ubuntu Docker images that come with [everyt
 Availible on [Docker Hub](https://hub.docker.com/repository/docker/tadejsv/ml-docker).
 
 1. [Quickstart](#quickstart)
-    - [Start Jupyter Lab/Notebook](#start-jupyter-labnotebook)
+    - [Start Jupyter Lab](#start-jupyter-lab)
     - [Run a script](#run-a-script)
 2. [Configuration](#configuration)
     - [Docker options](#docker-options)
@@ -19,9 +19,9 @@ Availible on [Docker Hub](https://hub.docker.com/repository/docker/tadejsv/ml-do
 
 ## Quickstart
 
-First, Make sure you have [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx) (>= 418.39), [docker](https://docs.docker.com/engine/install/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker) installed.
+First, Make sure you have [docker](https://docs.docker.com/engine/install/) installed. If you plan to use your GPU, you also need [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx) (>= 418.39) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker).
 
-### Start Jupyter Lab/Notebook
+### Start Jupyter Lab
 
 - **Step 1**: `cd` into the directory from which you want to work
 - **Step 2**: Execute this command
@@ -30,7 +30,10 @@ First, Make sure you have [NVIDIA drivers](https://www.nvidia.com/Download/index
     docker run --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch
     ```
 
-    This command will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888), with the password `getrekt`.
+    This command will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888), with the password `alba`.
+
+    If you want to understand what the docker options here do, how to run Jupyter Notebook instead of Jupyter Lab, how to change the password or other Jupyter settings - check out the [configuration](#configuration) section.
+
 - **Step 3**: When you want to stop the container, execute
     ``` bash
     docker stop alba
@@ -50,7 +53,7 @@ This will simply start running your script, and will not start Jupyter Lab. It w
 
 ### Docker options
 
-Let's break down what the options in the [default command](#start-jupyter-labnotebook) do:
+Let's break down what the options in the [default command](#start-jupyter-lab) do:
 
 * `--rm` removes the container after it exits. If you want to inspect container's logs after it exits, remove this part.
 * `-d` makes it run in the background. Since the container will be running in the background, you can use `docker logs` to view the output while it is running.
@@ -69,11 +72,15 @@ You can specify [command line options](https://jupyter-notebook.readthedocs.io/e
 --NotebookApp.password='<NEW_PASSWORD>'
 ```
 
-to the [default command](#start-jupyter-labnotebook).
+to the [default command](#start-jupyter-lab).
 
 #### Jupyter Notebook instead of Jupyter Lab
 
-If you wish to start Jupyter Notebook instead of Jupyter Lab (which you need to do this, for example, if you want the Catboost widgets to work), add `notebook` as the first argument (+ command line options).
+If you wish to start Jupyter Notebook instead of Jupyter Lab (which you need to do this, for example, if you want the Catboost widgets to work), add 
+```
+notebook
+```
+as the first argument (+ command line options).
 
 
 ## Specs and versions
