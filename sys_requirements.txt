@@ -2,7 +2,3 @@ build-essential
 cmake
 git
 curl
-ca-certificates
-libjpeg-dev
-libpng-dev
-zlib1g-dev

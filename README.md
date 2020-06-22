@@ -6,54 +6,45 @@ These are [easy to use](#quickstart) Ubuntu Docker images that come with [everyt
 
 Availible on [Docker Hub](https://hub.docker.com/repository/docker/tadejsv/ml-docker).
 
-1. [Installation](#installation)
-2. [Quickstart](#quickstart)
+1. [Quickstart](#quickstart)
     - [Start Jupyter Lab/Notebook](#start-jupyter-labnotebook)
     - [Run a script](#run-a-script)
-3. [Configuration](#configuration)
+2. [Configuration](#configuration)
     - [Docker options](#docker-options)
     - [Jupyter options](#Jupyter-options)
-4. [Specs and versions](#specs-and-versions)
-5. [Extending the image](#extending-the-image)
+3. [Specs and versions](#specs-and-versions)
+4. [Extending the image](#extending-the-image)
     - [Creating a new image](#creating-a-new-image)
     - [Installing with pip](#installing-with-pip)
 
-## Installation
-
-Make sure you have [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx) (>= 418.39), [docker](https://docs.docker.com/engine/install/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker) installed.
-
-And that's it! No need to install CUDA or anything else, the images takes care of that. Also, no need to download the image before running, `docker run` will download it, if it doesn't already exist. You only need to use `docker pull` if you want to update the images.
-
 ## Quickstart
 
-There are two ways to start the container (in the example for the `pytorch` image), depending on what you want to do:
-
-1. [Start Jupyter Lab/Notebook](#start-jupyter-lab/notebook)
-2. [Run a script](#run-a-script)
+First, Make sure you have [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx) (>= 418.39), [docker](https://docs.docker.com/engine/install/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker) installed.
 
 ### Start Jupyter Lab/Notebook
 
-To start the container and run Jupyter Lab, `cd` into the directory from which you want to work, and execute the command
+- **Step 1**: `cd` into the directory from which you want to work
+- **Step 2**: Execute this command
 
-``` bash
-docker run --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch
-```
+    ``` bash
+    docker run --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch
+    ```
 
-This command will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888), the password is `getrekt`.
-
-Since the container will be running in the background, you can use `docker logs` to view the output while it is running. If you want use bash inside the container it's probably easiest to open a terminal in Jupyter Lab, but you could use `docker exec` as well.
-
-You can stop this container with `docker stop alba`.
+    This command will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888), with the password `getrekt`.
+- **Step 3**: When you want to stop the container, execute
+    ``` bash
+    docker stop alba
+    ````
 
 ### Run a script
 
-If you want to run a `.py` or `.sh` script, you would add
+If you want to run a `.py` or `.sh` script, add the following to the command from Step 2 above:
 
 ```bash
 my_script.py arg1 arg2
 ```
 
-to the [default command](#start-jupyter-labnotebook). This will simply start running your script, and will not start Jupyter Lab.
+This will simply start running your script, and will not start Jupyter Lab. It will terminate the container automatically once your script finishes.
 
 ## Configuration
 
@@ -62,7 +53,7 @@ to the [default command](#start-jupyter-labnotebook). This will simply start run
 Let's break down what the options in the [default command](#start-jupyter-labnotebook) do:
 
 * `--rm` removes the container after it exits. If you want to inspect container's logs after it exits, remove this part.
-* `-d` makes it run in the background. 
+* `-d` makes it run in the background. Since the container will be running in the background, you can use `docker logs` to view the output while it is running.
 * `--name alba` names the container `alba` - then you can stop it with `docker stop alba` .
 * `--gpus all` gives the container access to the GPUs of your machine.
 * `--ipc=host` is needed for `pytorch` , because Docker limits shared memory for processes to only 64MB by default -- and if you will be loading/processing images with multiple workers, this will not be enough. Alternatively, you could adjust `shm-size` .

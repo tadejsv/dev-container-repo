@@ -25,7 +25,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
      apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Prepare python requirements file
-ENV PYTHON_VERSION=3.7
+ENV PYTHON_VERSION=3.8
 COPY py_requirements.txt /
 RUN sed -i "s/\$PYTHON_VERSION/$PYTHON_VERSION/g" py_requirements.txt
 
