@@ -28,8 +28,7 @@ To run the container, follow these steps:
     docker run --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch lab
     ```
 
-    | If you run this on a CPU-only machine, remove the `--gpus all`|
-    |-------------------|
+    >  If you run this on a CPU-only machine, remove the `--gpus all`
     
     Here in the example the final argument it `lab`, which will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888), with the password `alba`. Other availible options are:
     - `notebook`: same as `lab`, but starts a Jupyter Notebook.
@@ -39,22 +38,11 @@ To run the container, follow these steps:
 
     You can also add other arguments/options at the end of the command - in case of `lab` or `notebook` these should be Jupyter settings (see the [configuration](#configuration) section), while in case of a script they should be whatever arguments your script accepts.
 
-    
 
 - **Step 3**: When you want to stop the container, execute
     ``` bash
     docker stop alba
     ````
-
-### Run a script
-
-If you want to run a `.py` or `.sh` script, add the following to the command from Step 2 above:
-
-```bash
-my_script.py arg1 arg2
-```
-
-This will simply start running your script, and will not start Jupyter Lab. It will terminate the container automatically once your script finishes.
 
 ## Configuration
 
