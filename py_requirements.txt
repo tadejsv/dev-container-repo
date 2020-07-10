@@ -4,8 +4,12 @@ pandas
 mkl 
 mkl-include
 scipy
+statsmodels
 scikit-learn
+eli5
+spacy
 seaborn
+plotly
 jupyterlab
 ipywidgets
 widgetsnbextension
@@ -15,3 +19,6 @@ isort
 tqdm
 h5py
 Pillow
+click
+hydra-core
+pytest

@@ -7,8 +7,6 @@ These are [easy to use](#quickstart) Ubuntu Docker images that come with [everyt
 Availible on [Docker Hub](https://hub.docker.com/repository/docker/tadejsv/ml-docker).
 
 1. [Quickstart](#quickstart)
-    - [Start Jupyter Lab](#start-jupyter-lab)
-    - [Run a script](#run-a-script)
 2. [Configuration](#configuration)
     - [Docker options](#docker-options)
     - [Jupyter options](#Jupyter-options)
@@ -21,18 +19,27 @@ Availible on [Docker Hub](https://hub.docker.com/repository/docker/tadejsv/ml-do
 
 First, Make sure you have [docker](https://docs.docker.com/engine/install/) installed. If you plan to use your GPU, you also need [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx) (>= 418.39) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker).
 
-### Start Jupyter Lab
+To run the container, follow these steps:
 
 - **Step 1**: `cd` into the directory from which you want to work
 - **Step 2**: Execute this command
 
     ``` bash
-    docker run --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch
+    docker run --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch lab
     ```
 
-    This command will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888), with the password `alba`.
+    | If you run this on a CPU-only machine, remove the `--gpus all`|
+    |-------------------|
+    
+    Here in the example the final argument it `lab`, which will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888), with the password `alba`. Other availible options are:
+    - `notebook`: same as `lab`, but starts a Jupyter Notebook.
+    - `bash`: starts a bash terminal - in this case you'd want to replace the `-d` option with `-i -t` for an interactive session.
+    - name of a `.py` or `.sh` script - this will execute that script (and terminate the container automatically once the script finished)
 
-    If you want to understand what the docker options here do, how to run Jupyter Notebook instead of Jupyter Lab, how to change the password or other Jupyter settings - check out the [configuration](#configuration) section.
+
+    You can also add other arguments/options at the end of the command - in case of `lab` or `notebook` these should be Jupyter settings (see the [configuration](#configuration) section), while in case of a script they should be whatever arguments your script accepts.
+
+    
 
 - **Step 3**: When you want to stop the container, execute
     ``` bash
@@ -53,7 +60,7 @@ This will simply start running your script, and will not start Jupyter Lab. It w
 
 ### Docker options
 
-Let's break down what the options in the [default command](#start-jupyter-lab) do:
+Let's break down what the options in the [default command](#quickstart) do:
 
 * `--rm` removes the container after it exits. If you want to inspect container's logs after it exits, remove this part.
 * `-d` makes it run in the background. Since the container will be running in the background, you can use `docker logs` to view the output while it is running.
@@ -66,13 +73,13 @@ Let's break down what the options in the [default command](#start-jupyter-lab) d
 
 ### Jupyter options
 
-You can specify [command line options](https://jupyter-notebook.readthedocs.io/en/stable/config.html) to change some default settings -- for example, to change the passowrd. You can create a new password following the steps [here](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#preparing-a-hashed-password), and then change it by passing a command line argument
+You can specify [command line options](https://jupyter-notebook.readthedocs.io/en/stable/config.html) to change some default settings -- for example, to change the password. You can create a new password following the steps [here](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#preparing-a-hashed-password), and then change it by passing a command line argument
 
 ```
 --NotebookApp.password='<NEW_PASSWORD>'
 ```
 
-to the [default command](#start-jupyter-lab).
+to the [default command](#quickstart).
 
 #### Jupyter Notebook instead of Jupyter Lab
 
@@ -89,10 +96,10 @@ There are 4 different versions of the images (size means size when extracted):
 
 | Name | Size | Description |
 | ---- | ---- | ----------- |
-| [`eda`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.eda) | 2.63GB | Based on [`10.1-base-ubuntu18.04`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/base/Dockerfile) CUDA image. Uses conda, and comes the following packages installed: <ul><li>numpy, pandas and scipy</li><li>matplotlib and seaborn</li><li>scikit-learn and Pillow</li><li>Jupyter lab + TOC and code formatter extensions (with isort, black and autopep8 formatters)</li></ul>|
-| [`pytorch`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.pytorch) | 4.91GB| based on `eda`, comes with pytorch (with its own CUDA), torchvision and pytorch-lightning installed. |
-| [`tf`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.tensorflow) | 5.79GB | based on `eda`, comes with tensorflow installed (CUDA installed system-wide) |
-| [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) | 5.78GB | based on `eda`, comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). CUDA installed up to [`devel`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/devel/Dockerfile) level. |
+| [`eda`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.eda) | 3.29GB | Based on [`10.1-base-ubuntu18.04`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/base/Dockerfile) CUDA image. Uses conda, and comes with the following packages installed: <ul><li>**Basic**: numpy, pandas and scipy</li><li>**Plotting**: matplotlib, seaborn and plotly</li><li>**ML**: statsmodels, scikit-learn, eli5, spacy</li><li>**Jupyter lab** + TOC + code formatter extensions</li><li>**Utilities**: Click, hydra, pytest</li></ul>|
+| [`pytorch`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.pytorch) | 5.64GB| based on `eda`, comes with pytorch (with its own CUDA), torchvision, torchtext, pytorch-lightning  and 🤗/transformers installed. |
+| [`tf`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.tensorflow) | 6.57GB | based on `eda`, comes with tensorflow and 🤗/transformers installed (CUDA installed system-wide) |
+| [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) | 6.44GB | based on `eda`, comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). CUDA installed up to [`devel`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/devel/Dockerfile) level. |
 
 ## Extending the image
 
@@ -140,3 +147,4 @@ If all you need to do is to install a package or two, you can just add a line at
 * Write tests
 * Remove pytorch-nightly  when torch hits 1.6.0.
 * Up the CUDA version to 10.2 once TF starts supporting it.
+* Support for opening git repository inside a volume (see VSCode)

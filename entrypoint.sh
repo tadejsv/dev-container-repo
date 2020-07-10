@@ -9,6 +9,8 @@ elif [[ first_option -eq 1 ]]; then
     jupyter lab $@
 elif  [[ $1 == "lab" ]] || [[ $1 == "notebook" ]]; then
     jupyter $@
+elif [[ $1 == "bash" ]]; then
+    bash
 else
     # If suffix is .py, execute python script with args
     if [[ $(echo $1 | grep -Ec ".*\.py$") -eq 1 ]]; then
