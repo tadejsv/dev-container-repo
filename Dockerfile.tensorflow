@@ -1,6 +1,6 @@
 FROM tadejsv/ml-docker:eda
 
-ARG CUDNN=7.6.4.38-1
+ARG CUDNN=7.6.5.32-1
 ARG CUDNN_MAJOR_VERSION=7
 ARG LIB_DIR_PREFIX=x86_64
 ARG LIBNVINFER=6.0.1-1
@@ -40,4 +40,4 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
     && ldconfig
 
 # Install tensorflow
-RUN pip install tensorflow transformers --no-cache-dir
+RUN pip install tensorflow tensorflow_datasets transformers --no-cache-dir

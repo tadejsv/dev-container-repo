@@ -17,7 +17,7 @@ Availible on [Docker Hub](https://hub.docker.com/repository/docker/tadejsv/ml-do
 
 ## Quickstart
 
-First, Make sure you have [docker](https://docs.docker.com/engine/install/) installed. If you plan to use your GPU, you also need [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx) (>= 418.39) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker).
+First, Make sure you have [docker](https://docs.docker.com/engine/install/) installed. If you plan to use your GPU, you also need [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx) (>= 440.33) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker).
 
 To run the container, follow these steps:
 
@@ -28,7 +28,7 @@ To run the container, follow these steps:
     docker run --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch lab
     ```
 
-    >  If you run this on a CPU-only machine, remove the `--gpus all`
+    >  If you run this on a CPU-only machine, remove `--gpus all`
     
     Here in the example the final argument it `lab`, which will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888), with the password `alba`. Other availible options are:
     - `notebook`: same as `lab`, but starts a Jupyter Notebook.
@@ -69,25 +69,16 @@ You can specify [command line options](https://jupyter-notebook.readthedocs.io/e
 
 to the [default command](#quickstart).
 
-#### Jupyter Notebook instead of Jupyter Lab
-
-If you wish to start Jupyter Notebook instead of Jupyter Lab (which you need to do this, for example, if you want the Catboost widgets to work), add 
-```
-notebook
-```
-as the first argument (+ command line options).
-
-
 ## Specs and versions
 
 There are 4 different versions of the images (size means size when extracted):
 
 | Name | Size | Description |
 | ---- | ---- | ----------- |
-| [`eda`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.eda) | 3.29GB | Based on [`10.1-base-ubuntu18.04`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/base/Dockerfile) CUDA image. Uses conda, and comes with the following packages installed: <ul><li>**Basic**: numpy, pandas and scipy</li><li>**Plotting**: matplotlib, seaborn and plotly</li><li>**ML**: statsmodels, scikit-learn, eli5, spacy</li><li>**Jupyter lab** + TOC + code formatter extensions</li><li>**Utilities**: Click, hydra, pytest</li></ul>|
-| [`pytorch`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.pytorch) | 5.64GB| based on `eda`, comes with pytorch (with its own CUDA), torchvision, torchtext, pytorch-lightning  and 🤗/transformers installed. |
-| [`tf`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.tensorflow) | 6.57GB | based on `eda`, comes with tensorflow and 🤗/transformers installed (CUDA installed system-wide) |
-| [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) | 6.44GB | based on `eda`, comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). CUDA installed up to [`devel`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/devel/Dockerfile) level. |
+| [`eda`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.eda) | 3.21GB | Based on [`10.2-base-ubuntu18.04`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/10.2/ubuntu18.04-x86_64/base/Dockerfile) CUDA image. Uses conda, and comes with the following packages installed: <ul><li>**Basic**: numpy, pandas and scipy</li><li>**Plotting**: matplotlib, seaborn and plotly</li><li>**ML**: statsmodels, scikit-learn, eli5, spacy</li><li>**Jupyter lab** + TOC + code formatter extensions</li><li>**Utilities**: Click, hydra, pytest</li></ul>|
+| [`pytorch`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.pytorch) | 5.55GB| based on `eda`, comes with pytorch (with its own CUDA), torchvision, torchtext, pytorch-lightning  and 🤗/transformers installed. |
+| [`tf`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.tensorflow) | 6.04GB | based on `eda`, comes with tensorflow and 🤗/transformers installed (CUDA installed system-wide) |
+| [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) | 6.43GB | based on `eda`, comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). CUDA installed up to [`devel`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/devel/Dockerfile) level. |
 
 ## Extending the image
 
@@ -119,7 +110,7 @@ You would then build this image, and run it exactly like the `pytorch` one.
 
 If you attempt to install anything that requires CUDA, things could get messy. For example, pytorch installs its own CUDA toolkit, which can not be used with other programs. This means you'd have to install CUDA yourself.
 
-Luckily, this isn't that hard. The images are based on [ `10.1-base-ubuntu18.04` ](https://hub.docker.com/r/nvidia/cuda/) docker CUDA image, which means you can "upgrade" them to runtime or development CUDA pretty easy - just paste together the [extra commands](https://gitlab.com/nvidia/container-images/cuda/-/tree/master/dist/ubuntu18.04/10.2) from these images -- see the [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) dockerfile. This will add a few GB to your images.
+Luckily, this isn't that hard. The images are based on [ `10.2-base-ubuntu18.04` ](https://hub.docker.com/r/nvidia/cuda/) docker CUDA image, which means you can "upgrade" them to runtime or development CUDA pretty easy - just paste together the [extra commands](https://gitlab.com/nvidia/container-images/cuda/-/tree/master/dist/ubuntu18.04/10.2) from these images -- see the [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) dockerfile. This will add a few GB to your images.
 
 ### Installing with pip
 
@@ -133,6 +124,4 @@ If all you need to do is to install a package or two, you can just add a line at
 
 * Create a TensorBoard image and intergrate with Docker compose
 * Write tests
-* Remove pytorch-nightly  when torch hits 1.6.0.
-* Up the CUDA version to 10.2 once TF starts supporting it.
 * Support for opening git repository inside a volume (see VSCode)

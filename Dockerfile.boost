@@ -1,6 +1,6 @@
 FROM tadejsv/ml-docker:eda
 
-ENV NCCL_VERSION 2.4.8
+ENV NCCL_VERSION 2.7.8
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y --no-install-recommends \

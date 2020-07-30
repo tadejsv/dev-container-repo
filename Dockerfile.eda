@@ -1,4 +1,4 @@
-ARG CUDA=10.1
+ARG CUDA=10.2
 ARG UBUNTU_VERSION=18.04
 FROM nvidia/cuda:${CUDA}-base-ubuntu${UBUNTU_VERSION}
 
@@ -30,12 +30,12 @@ COPY py_requirements.txt /
 RUN sed -i "s/\$PYTHON_VERSION/$PYTHON_VERSION/g" py_requirements.txt
 
 # Install all python stuff, Jupyter with extensions included
-RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+RUN SHA=2 curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
      chmod +x ~/miniconda.sh && \
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh && \
      conda config --system --prepend channels conda-forge && conda config --set always_yes yes &&\
-     # Install basic python stuff (second line to prevent installation of old node)
+     # Install basic python stuff (second line to prevent installation of old node.js)
      conda install --file py_requirements.txt && \
      pip install jupyterlab_code_formatter --no-cache-dir && \
      # Enable jupyter extensions

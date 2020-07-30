@@ -1,7 +1,7 @@
 FROM tadejsv/ml-docker:eda
 
 # Install pytorch
-RUN  conda install pytorch torchvision torchtext cudatoolkit=10.2 -y -c pytorch-nightly && \
+RUN  conda install pytorch torchvision torchtext cudatoolkit=10.2 -y -c pytorch && \
      conda install pytorch-lightning && \
      pip install transformers --no-cache-dir && \
      # Some cleanup
