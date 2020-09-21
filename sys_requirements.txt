@@ -4,3 +4,5 @@ git
 curl
 wget
 unzip
+openssh
+nano
