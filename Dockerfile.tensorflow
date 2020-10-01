@@ -39,5 +39,7 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
     && echo "/usr/local/cuda/lib64/stubs" > /etc/ld.so.conf.d/z-cuda-stubs.conf \
     && ldconfig
 
-# Install tensorflow
+# Install tensorflow and transformers
 RUN pip install tensorflow tensorflow_datasets transformers --no-cache-dir
+# Needed to avoid warnings with transformers
+ENV TOKENIZERS_PARALLELISM true

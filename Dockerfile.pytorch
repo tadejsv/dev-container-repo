@@ -6,3 +6,5 @@ RUN  conda install pytorch torchvision torchtext cudatoolkit=10.2 -y -c pytorch 
      pip install transformers --no-cache-dir && \
      # Some cleanup
      conda clean -yaf && rm -rf /home/.cache
+# Needed to avoid warnings with transformers
+ENV TOKENIZERS_PARALLELISM true
