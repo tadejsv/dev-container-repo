@@ -18,7 +18,7 @@ autopep8
 isort
 tqdm
 h5py
+pyarrow
 Pillow
 click
-hydra-core
 pytest
