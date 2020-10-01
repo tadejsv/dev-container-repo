@@ -4,5 +4,5 @@ git
 curl
 wget
 unzip
-openssh
+openssh-server
 nano
