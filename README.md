@@ -25,17 +25,12 @@ To run the container, follow these steps:
 - **Step 2**: Execute this command
 
     ``` bash
-    docker run --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch lab
+    docker run --init --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch
     ```
 
     >  If you run this on a CPU-only machine, remove `--gpus all`
 
-    Here in the example the final argument it `lab`, which will make Jupyter Lab availible on your machine at [https://localhost:8888](https://localhost:8888), with the password `alba`. Other availible options are:
-  - `notebook`: same as `lab`, but starts a Jupyter Notebook.
-  - `bash`: starts a bash terminal - in this case you'd want to replace the `-d` option with `-i -t` for an interactive session.
-  - name of a `.py` or `.sh` script - this will execute that script (and terminate the container automatically once the script finished)
-
-  You can also add other arguments/options at the end of the command - in case of `lab` or `notebook` these should be Jupyter settings (see the [configuration](#configuration) section), while in case of a script they should be whatever arguments your script accepts.
+    By default this will start a Jupyter Lab with `jupyter lab`, but you can change this by passing a different command.
 
 - **Step 3**: When you want to stop the container, execute
 
@@ -49,6 +44,7 @@ To run the container, follow these steps:
 
 Let's break down what the options in the [default command](#quickstart) do:
 
+- `--init` does the proper [init](https://github.com/krallin/tini) and takes care of process reaping
 - `--rm` removes the container after it exits. If you want to inspect container's logs after it exits, remove this part.
 - `-d` makes it run in the background. Since the container will be running in the background, you can use `docker logs` to view the output while it is running.
 - `--name alba` names the container `alba` - then you can stop it with `docker stop alba` .
@@ -60,10 +56,10 @@ Let's break down what the options in the [default command](#quickstart) do:
 
 ### Jupyter options
 
-You can specify [command line options](https://jupyter-notebook.readthedocs.io/en/stable/config.html) to change some default settings -- for example, to change the password. You can create a new password following the steps [here](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#preparing-a-hashed-password), and then change it by passing a command line argument
+You can specify [command line options](https://jupyter-notebook.readthedocs.io/en/stable/config.html) to change some default settings -- for example, to change the password. You can create a new password following the steps [here](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#preparing-a-hashed-password), and then change it by passing the command
 
 ```
---NotebookApp.password='<NEW_PASSWORD>'
+jupyter lab --NotebookApp.password='<NEW_PASSWORD>'
 ```
 
 to the [default command](#quickstart).

@@ -62,8 +62,4 @@ RUN chmod -R a+rwx $HOME && chmod -R a+rwx /opt/conda/share/jupyter
 WORKDIR /workspace
 
 # Prepare entrypoint
-ENV TINI_VERSION v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-COPY entrypoint.sh /
-RUN chmod +x /entrypoint.sh && chmod +x /tini
-ENTRYPOINT ["/tini", "-g", "--", "/entrypoint.sh"]
+CMD ["jupyter", "lab"]
