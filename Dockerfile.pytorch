@@ -1,4 +1,4 @@
-FROM tadejsv/ml-docker:eda
+FROM ml-dev-eda
 
 # Install pytorch
 RUN  conda install pytorch torchvision torchtext cudatoolkit=10.2 -y -c pytorch && \

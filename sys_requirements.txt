@@ -1,3 +1,4 @@
+sudo
 build-essential
 cmake
 git

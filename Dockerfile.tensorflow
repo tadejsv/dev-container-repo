@@ -1,4 +1,4 @@
-FROM tadejsv/ml-docker:eda
+FROM ml-dev-eda
 
 ARG CUDNN=7.6.5.32-1
 ARG CUDNN_MAJOR_VERSION=7
@@ -7,7 +7,7 @@ ARG LIBNVINFER=6.0.1-1
 ARG LIBNVINFER_MAJOR_VERSION=6
 
 # Pick up some TF dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
         build-essential \
         cuda-command-line-tools-${CUDA/./-} \
         # There appears to be a regression in libcublas10=10.2.2.89-1 which
@@ -28,16 +28,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         unzip \
         libnvinfer${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}+cuda${CUDA} \
         libnvinfer-plugin${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}+cuda${CUDA} \
-        && apt-get clean && rm -rf /var/lib/apt/lists/*
+        && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
 
 # For CUDA profiling, TensorFlow requires CUPTI.
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 # Link the libcuda stub to the location where tensorflow is searching for it and reconfigure
 # dynamic linker run-time bindings
-RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 \
-    && echo "/usr/local/cuda/lib64/stubs" > /etc/ld.so.conf.d/z-cuda-stubs.conf \
-    && ldconfig
+RUN sudo ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 \
+    && echo "/usr/local/cuda/lib64/stubs" | sudo tee /etc/ld.so.conf.d/z-cuda-stubs.conf \
+    && sudo ldconfig
 
 # Install tensorflow and transformers
 RUN pip install tensorflow tensorflow_datasets transformers --no-cache-dir

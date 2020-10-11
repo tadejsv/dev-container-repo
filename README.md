@@ -1,12 +1,10 @@
 # 🐋🔥 ML Docker containers
 
-<a href="https://hub.docker.com/repository/docker/tadejsv/ml-docker" alt="Docker hub"><img src="https://img.shields.io/docker/pulls/tadejsv/ml-docker?style=for-the-badge"/></a>
-
 These are [easy to use](#quickstart) Ubuntu Docker images that come with [everything you need](#specs-and-versions) for machine learning - full GPU (CUDA) support included! And if there's a package you're missing, it's very easy to [extend the container](#extending-the-container).
 
-Availible on [Docker Hub](https://hub.docker.com/repository/docker/tadejsv/ml-docker).
-
 1. [Quickstart](#quickstart)
+    - [Installation](#installation)
+    - [Running the container](#running-the-container)
 2. [Configuration](#configuration)
     - [Docker options](#docker-options)
     - [Jupyter options](#Jupyter-options)
@@ -19,16 +17,35 @@ Availible on [Docker Hub](https://hub.docker.com/repository/docker/tadejsv/ml-do
 
 First, Make sure you have [docker](https://docs.docker.com/engine/install/) installed. If you plan to use your GPU, you also need [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx) (>= 440.33) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker).
 
+## Installation
+
+First, you need to create the image. You need to do this only the first time you want to run the container. To do this, follow these steps:
+- **Step 1**: Clone this git repository to your development machine and `cd` into it.
+- **Step 2**: Create the base (`eda`) container using
+    ```bash
+    docker build --build-arg USERNAME="$(whoami)" --build-arg UID="$(id -u)" -t ml-dev-eda -f Dockerfile.eda .
+    ```
+    This is needed as te other images start from this one. What this creates is a base image, where the user has the exact same name and id as your user - this is helpful to not create permissions issues for files that the docker container will create in your local filesystem.
+- **Step 3**: Create any other images you want (for Pytorch, Tensorflow or gradient boosting using)
+    ```
+     docker build -t ml-dev-IMAGE_TAG -f Dockerfile.IMAGE_TAG .
+    ```
+    You can select either `eda`, `pytorch`, `tensorflow` or `boost` for the `IMAGE_TAG`.
+
+## Running the container
+
 To run the container, follow these steps:
 
 - **Step 1**: `cd` into the directory from which you want to work
 - **Step 2**: Execute this command
 
     ``` bash
-    docker run --init --rm -d --name alba --gpus all --ipc=host -u $(id -u) -p 8888:8888 -v "$(pwd)":/workspace tadejsv/ml-docker:pytorch
+    docker run --init --rm -d --name alba --gpus all --ipc=host -p 8888:8888 -v "$(pwd)":/home/"$(whoami)"/workspace ml-dev-pytorch
     ```
 
     >  If you run this on a CPU-only machine, remove `--gpus all`
+
+    In this example we are starting a Pytorch container, but you can change that by changing `ml-dev-pytorch` to something else.
 
     By default this will start a Jupyter Lab with `jupyter lab`, but you can change this by passing a different command.
 
@@ -50,7 +67,6 @@ Let's break down what the options in the [default command](#quickstart) do:
 - `--name alba` names the container `alba` - then you can stop it with `docker stop alba` .
 - `--gpus all` gives the container access to the GPUs of your machine.
 - `--ipc=host` is needed for `pytorch` , because Docker limits shared memory for processes to only 64MB by default -- and if you will be loading/processing images with multiple workers, this will not be enough. Alternatively, you could adjust `shm-size` .
-- `-u $(id -u)` runs the container as the current user on your machine - so you can access any documents that the container creates.
 - `-p 8888:8888` binds the container's 8888 port (where Jupyter will be listening) to port 8888 on your machine.
 - `-v "$(pwd)":/workspace` creates a bind mount from the currend directory on your machine to the container's mount directory. This gives the container the ability to read and write in the current directory on your system.  
 
@@ -118,3 +134,4 @@ If all you need to do is to install a package or two, you can just add a line at
 ## TODO
 
 - Write tests
+- Create installation script
