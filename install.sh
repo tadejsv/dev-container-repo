@@ -73,4 +73,4 @@ echo -e "***********************************************\n"
 cd ..
 rm -rf ml-docker
 
-echo -e "\n✨ Done! ✨"
+echo -e "✨ Done! ✨"

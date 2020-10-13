@@ -17,22 +17,19 @@ These are [easy to use](#quickstart) Ubuntu Docker images that come with [everyt
 
 First, Make sure you have [docker](https://docs.docker.com/engine/install/) installed. If you plan to use your GPU, you also need [NVIDIA drivers](https://www.nvidia.com/Download/index.aspx) (>= 440.33) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker).
 
-## Installation
+### Installation
 
-First, you need to create the image. You need to do this only the first time you want to run the container. To do this, follow these steps:
-- **Step 1**: Clone this git repository to your development machine and `cd` into it.
-- **Step 2**: Create the base (`eda`) container using
-    ```bash
-    docker build --build-arg USERNAME="$(whoami)" --build-arg UID="$(id -u)" -t ml-dev-eda -f Dockerfile.eda .
-    ```
-    This is needed as te other images start from this one. What this creates is a base image, where the user has the exact same name and id as your user - this is helpful to not create permissions issues for files that the docker container will create in your local filesystem.
-- **Step 3**: Create any other images you want (for Pytorch, Tensorflow or gradient boosting using)
-    ```
-     docker build -t ml-dev-IMAGE_TAG -f Dockerfile.IMAGE_TAG .
-    ```
-    You can select either `eda`, `pytorch`, `tensorflow` or `boost` for the `IMAGE_TAG`.
+You can create the images on your computer and the shortcuts to use them (see below) with the following command
+```bash
+wget -qO- https://raw.githubusercontent.com/tadejsv/ml-docker/master/install.sh | bash /dev/stdin ARGS
+```
+Here `ARGS` can be either empty of any number of arguments from `pytorch`, `tensorflow` or `boost`. This command will do the following (as you can see if you check the `install.sh` script):
+- Create `ml-dev-eda` and `ml-dev-TAG` docker images (for each `TAG` in `ARGS`)
+- Create `ml-dev-eda` and `ml-dev-TAG` commands (shortcuts) in `/usr/local/bin/`
 
-## Running the container
+See [Docker options](#docker-options) for more details on this.
+
+### Running the container
 
 To run the container, follow these steps:
 
@@ -40,12 +37,12 @@ To run the container, follow these steps:
 - **Step 2**: Execute this command
 
     ``` bash
-    docker run --init --rm -d --name alba --gpus all --ipc=host -p 8888:8888 -v "$(pwd)":/home/"$(whoami)"/workspace ml-dev-pytorch
+    ml-dev-pytorch
     ```
 
-    >  If you run this on a CPU-only machine, remove `--gpus all`
+    >  If you run this on a CPU-only machine, use `ml-dev-pytorch-cpu`
 
-    In this example we are starting a Pytorch container, but you can change that by changing `ml-dev-pytorch` to something else.
+    In this example we are starting a Pytorch container, but you can change that by changing `ml-dev-pytorch` to something else (e.g. `ml-dev-tensorflow`).
 
     By default this will start a Jupyter Lab with `jupyter lab`, but you can change this by passing a different command.
 
@@ -59,8 +56,25 @@ To run the container, follow these steps:
 
 ### Docker options
 
-Let's break down what the options in the [default command](#quickstart) do:
+#### Installation
 
+The installation script creates the images using
+```bash
+docker build --build-arg USERNAME="$(whoami)" --build-arg UID="$(id -u)" -t ml-dev-TAG -f Dockerfile.TAG .
+```
+
+This creates a Docker image where the user has your username and user id. This is very helpful, as when the docker container will write to your local directories, there won't be any permission issues (if you have the permission so does the docker container and vice versa).
+
+#### Running the container
+
+The default command executed by `ml-dev-TAG` is
+
+```bash
+docker run --init --rm -d --name alba --gpus all --ipc=host -p 8888:8888 -v "$(pwd)":/home/"$(whoami)"/workspace ml-dev-TAG
+```
+> If using `ml-dev-TAG-cpu`, the `--gpus all` option is removed
+
+Let's break down what the options here do:
 - `--init` does the proper [init](https://github.com/krallin/tini) and takes care of process reaping
 - `--rm` removes the container after it exits. If you want to inspect container's logs after it exits, remove this part.
 - `-d` makes it run in the background. Since the container will be running in the background, you can use `docker logs` to view the output while it is running.
@@ -68,7 +82,9 @@ Let's break down what the options in the [default command](#quickstart) do:
 - `--gpus all` gives the container access to the GPUs of your machine.
 - `--ipc=host` is needed for `pytorch` , because Docker limits shared memory for processes to only 64MB by default -- and if you will be loading/processing images with multiple workers, this will not be enough. Alternatively, you could adjust `shm-size` .
 - `-p 8888:8888` binds the container's 8888 port (where Jupyter will be listening) to port 8888 on your machine.
-- `-v "$(pwd)":/workspace` creates a bind mount from the currend directory on your machine to the container's mount directory. This gives the container the ability to read and write in the current directory on your system.  
+- `-v "$(pwd)":/home/$(whoami)/workspace` creates a bind mount from the current directory on your machine to the container's mount directory. This gives the container the ability to read and write in the current directory on your system. 
+
+If you want to modify this command, just modify `/usr/local/bin/ml-dev-TAG[-cpu]`
 
 ### Jupyter options
 
