@@ -26,12 +26,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 ARG USERNAME
 ARG UID
 RUN echo "${USERNAME} (${UID})"
-RUN useradd ${USERNAME} -u ${UID} -G sudo -s /bin/bash -m  && \
+RUN useradd ${USERNAME} -u ${UID} -G sudo -s /bin/bash && \
     echo ${USERNAME}' ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    chown ${USERNAME}:${USERNAME} /home/${USERNAME}
+    chown ${USERNAME}:${USERNAME} /home
 
 USER ${USERNAME}
-ENV HOME /home/${USERNAME}
+ENV HOME /home
 WORKDIR ${HOME}
 
 # Prepare python requirements file
@@ -68,5 +68,5 @@ RUN jupyter notebook --generate-config
 COPY jupyter_notebook_config.py $HOME/.jupyter/
 
 # Prepare entrypoint and mount folder
-WORKDIR $HOME/workspace
+WORKDIR $HOME/ws
 CMD ["jupyter", "lab"]

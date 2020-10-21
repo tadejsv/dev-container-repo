@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# TODO: Change home directory to something else (just home?)
-# Add 'eda' to args, for more consistent looping
+# TODO: Add 'eda' to args, for more consistent looping
 # Conditional add to .bashrc function
 
 # Check arguments
@@ -63,8 +62,8 @@ echo "Creating shortcuts"
 echo -e "***********************************************\n"
 sleep 1
 
-DOCKER_COM="docker run --init --rm -d --name alba --gpus all --ipc=host -p 8888:8888 -v \"\$(pwd)\":/home/\"\$(whoami)\"/workspace "
-DOCKER_COM_CPU="docker run --init --rm -d --name alba --ipc=host -p 8888:8888 -v \"\$(pwd)\":/home/\"\$(whoami)\"/workspace "
+DOCKER_COM="docker run --init --rm -d --name alba --gpus all --ipc=host -p 8888:8888 -v \"\$(pwd)\":/home/ws "
+DOCKER_COM_CPU="docker run --init --rm -d --name alba --ipc=host -p 8888:8888 -v \"\$(pwd)\":/home/ws "
 
 echo -e '\n# Docker ML development images aliases' >> $SHFILE
 echo "alias ml-dev-eda='$DOCKER_COM ml-dev-eda:$UNAME'" >> $SHFILE
