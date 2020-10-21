@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# TODO: Change home directory to something else (just home?)
+# Add 'eda' to args, for more consistent looping
+# Conditional add to .bashrc function
+
 # Check arguments
 ALLOWED_TAGS=( 'pytorch' 'tensorflow' 'boost' )
 
@@ -12,10 +16,17 @@ do
 done
 
 # Check that we can create shortcuts
-if [[ ! $PATH =~ '/usr/local/bin' ]]; then
-    echo "/usr/local/bin is not on PATH, can not create shortcuts."
+if [ "$SHELL" = "/bin/bash" ]; then
+    SHFILE=~/.bashrc
+elif [ "$SHELL" = "/bin/zsh" ]; then
+    SHFILE=~/.zshrc
+else
+    echo "Neither ~/.bashrc or ~/.zshrc found, can not create aliases."
     exit 1
 fi
+
+# Get user name
+UNAME=$(whoami)
 
 # Get github repository
 echo -e "\n***********************************************"
@@ -33,7 +44,7 @@ echo "Begining eda (base) image build"
 echo -e "***********************************************\n"
 sleep 1
 
-docker build --build-arg USERNAME="$(whoami)" --build-arg UID="$(id -u)" -t ml-dev-eda -f Dockerfile.eda .
+docker build --build-arg USERNAME=$UNAME --build-arg UID="$(id -u)" -t ml-dev-eda:$UNAME -f Dockerfile.eda .
 
 # Build other images, if any
 for arg in $@
@@ -43,7 +54,7 @@ do
     echo -e "***********************************************\n"
     sleep 1
 
-    docker build -t ml-dev-$arg -f Dockerfile.$arg .
+    docker build -t ml-dev-$arg:$UNAME -f Dockerfile.$arg .
 done
 
 # Create shortcuts
@@ -52,17 +63,17 @@ echo "Creating shortcuts"
 echo -e "***********************************************\n"
 sleep 1
 
-echo 'docker run --init --rm -d --name alba --gpus all --ipc=host -p 8888:8888 -v "$(pwd)":/home/"$(whoami)"/workspace ml-dev-eda' | sudo tee /usr/local/bin/ml-dev-eda
-echo 'docker run --init --rm -d --name alba --ipc=host -p 8888:8888 -v "$(pwd)":/home/"$(whoami)"/workspace ml-dev-eda' | sudo tee /usr/local/bin/ml-dev-eda-cpu
+DOCKER_COM="docker run --init --rm -d --name alba --gpus all --ipc=host -p 8888:8888 -v \"\$(pwd)\":/home/\"\$(whoami)\"/workspace "
+DOCKER_COM_CPU="docker run --init --rm -d --name alba --ipc=host -p 8888:8888 -v \"\$(pwd)\":/home/\"\$(whoami)\"/workspace "
 
-sudo chmod +x /usr/local/bin/ml-dev-eda /usr/local/bin/ml-dev-eda-cpu
+echo -e '\n# Docker ML development images aliases' >> $SHFILE
+echo "alias ml-dev-eda='$DOCKER_COM ml-dev-eda:$UNAME'" >> $SHFILE
+echo "alias ml-dev-eda-cpu='$DOCKER_COM_CPU ml-dev-eda:$UNAME'" >> $SHFILE
 
 for arg in $@
 do
-    echo 'docker run --init --rm -d --name alba --gpus all --ipc=host -p 8888:8888 -v "$(pwd)":/home/"$(whoami)"/workspace ml-dev-'$arg | sudo tee /usr/local/bin/ml-dev-$arg
-    echo 'docker run --init --rm -d --name alba --ipc=host -p 8888:8888 -v "$(pwd)":/home/"$(whoami)"/workspace ml-dev-'$arg | sudo tee /usr/local/bin/ml-dev-$arg-cpu
-
-    sudo chmod +x /usr/local/bin/ml-dev-$arg /usr/local/bin/ml-dev-$arg-cpu
+    echo "alias ml-dev-$arg='$DOCKER_COM ml-dev-$arg:$UNAME'" >> $SHFILE
+    echo "alias ml-dev-$arg-cpu='$DOCKER_COM_CPU ml-dev-$arg:$UNAME'" >> $SHFILE
 done
 
 # Clean up

@@ -20,10 +20,13 @@ First, Make sure you have [docker](https://docs.docker.com/engine/install/) inst
 ### Installation
 
 You can create the images on your computer and the shortcuts to use them (see below) with the following command
+
 ```bash
 wget -qO- https://raw.githubusercontent.com/tadejsv/ml-docker/master/install.sh | bash /dev/stdin ARGS
 ```
+
 Here `ARGS` can be either empty of any number of arguments from `pytorch`, `tensorflow` or `boost`. This command will do the following (as you can see if you check the `install.sh` script):
+
 - Create `ml-dev-eda` and `ml-dev-TAG` docker images (for each `TAG` in `ARGS`)
 - Create `ml-dev-eda` and `ml-dev-TAG` commands (shortcuts) in `/usr/local/bin/`
 
@@ -59,6 +62,7 @@ To run the container, follow these steps:
 #### Installation
 
 The installation script creates the images using
+
 ```bash
 docker build --build-arg USERNAME="$(whoami)" --build-arg UID="$(id -u)" -t ml-dev-TAG -f Dockerfile.TAG .
 ```
@@ -72,9 +76,11 @@ The default command executed by `ml-dev-TAG` is
 ```bash
 docker run --init --rm -d --name alba --gpus all --ipc=host -p 8888:8888 -v "$(pwd)":/home/"$(whoami)"/workspace ml-dev-TAG
 ```
+
 > If using `ml-dev-TAG-cpu`, the `--gpus all` option is removed
 
 Let's break down what the options here do:
+
 - `--init` does the proper [init](https://github.com/krallin/tini) and takes care of process reaping
 - `--rm` removes the container after it exits. If you want to inspect container's logs after it exits, remove this part.
 - `-d` makes it run in the background. Since the container will be running in the background, you can use `docker logs` to view the output while it is running.
@@ -90,7 +96,7 @@ If you want to modify this command, just modify `/usr/local/bin/ml-dev-TAG[-cpu]
 
 You can specify [command line options](https://jupyter-notebook.readthedocs.io/en/stable/config.html) to change some default settings -- for example, to change the password. You can create a new password following the steps [here](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#preparing-a-hashed-password), and then change it by passing the command
 
-```
+```bash
 jupyter lab --NotebookApp.password='<NEW_PASSWORD>'
 ```
 
@@ -103,8 +109,8 @@ There are 4 different versions of the images (size means size when extracted):
 | Name | Size | Description |
 | ---- | ---- | ----------- |
 | [`eda`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.eda) | 3.21GB | Based on [`10.2-base-ubuntu18.04`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/10.2/ubuntu18.04-x86_64/base/Dockerfile) CUDA image. Uses conda, and comes with the following packages installed: <ul><li>**Basic**: numpy, pandas and scipy</li><li>**Plotting**: matplotlib, seaborn and plotly</li><li>**ML**: statsmodels, scikit-learn, eli5, spacy</li><li>**Jupyter lab** + TOC + code formatter extensions</li><li>**Utilities**: Click, hydra, pytest</li></ul>|
-| [`pytorch`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.pytorch) | 5.55GB| based on `eda`, comes with pytorch (with its own CUDA), torchvision, torchtext, pytorch-lightning  and 🤗/transformers installed. |
-| [`tf`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.tensorflow) | 6.04GB | based on `eda`, comes with tensorflow and 🤗/transformers installed (CUDA installed system-wide) |
+| [`pytorch`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.pytorch) | 5.55GB| based on `eda`, comes with pytorch (with its own CUDA), torchvision, torchtext, pytorch-lightning  and 🤗transformers installed. |
+| [`tf`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.tensorflow) | 6.04GB | based on `eda`, comes with tensorflow and 🤗transformers installed (CUDA installed system-wide) |
 | [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) | 6.43GB | based on `eda`, comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). CUDA installed up to [`devel`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/devel/Dockerfile) level. |
 
 ## Extending the image
@@ -150,4 +156,3 @@ If all you need to do is to install a package or two, you can just add a line at
 ## TODO
 
 - Write tests
-- Create installation script
