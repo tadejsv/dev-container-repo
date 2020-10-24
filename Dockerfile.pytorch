@@ -1,4 +1,4 @@
-FROM ml-dev-eda:{$USERNAME}
+FROM ml-dev-eda:${USERNAME}
 
 # Install pytorch
 RUN  conda install pytorch torchvision torchtext cudatoolkit=10.2 -y -c pytorch && \

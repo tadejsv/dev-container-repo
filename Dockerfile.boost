@@ -1,4 +1,4 @@
-FROM ml-dev-eda:{$USERNAME}
+FROM ml-dev-eda:${USERNAME}
 
 ENV NCCL_VERSION 2.7.8
 
