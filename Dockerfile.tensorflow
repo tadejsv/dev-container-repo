@@ -1,3 +1,4 @@
+ARG USERNAME
 FROM ml-dev-eda:${USERNAME}
 
 ARG CUDNN=7.6.5.32-1
