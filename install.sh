@@ -53,7 +53,8 @@ do
     echo -e "***********************************************\n"
     sleep 1
 
-    docker build --build-arg USERNAME=$UNAME t ml-dev-$arg:$UNAME -f Dockerfile.$arg .
+    echo "docker build --build-arg USERNAME=$UNAME t ml-dev-$arg:$UNAME -f Dockerfile.$arg ."
+    docker build --build-arg USERNAME=$UNAME -t ml-dev-$arg:$UNAME -f Dockerfile.$arg .
 done
 
 # Create shortcuts
