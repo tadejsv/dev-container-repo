@@ -1,4 +1,4 @@
-python>=$PYTHON_VERSION
+python>=3.8
 pip
 pandas
 mkl 

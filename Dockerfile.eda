@@ -36,9 +36,7 @@ WORKDIR ${HOME}
 
 # Prepare python requirements file
 ENV PATH ${HOME}/conda/bin:$PATH
-ENV PYTHON_VERSION=3.8
 COPY py_requirements.txt ${HOME}
-RUN sed -i "s/\$PYTHON_VERSION/$PYTHON_VERSION/g" py_requirements.txt
 
 # Install all python stuff, Jupyter with extensions included
 RUN SHA=1 curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
@@ -47,7 +45,7 @@ RUN SHA=1 curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-
      rm ~/miniconda.sh && \
      conda config --system --prepend channels conda-forge && conda config --set always_yes yes &&\
      # Install basic python stuff (second line to prevent installation of old node.js + get current hydra)
-     conda install --file py_requirements.txt && \
+     conda update ruamel_yaml && conda install --file py_requirements.txt && \
      pip install jupyterlab_code_formatter hydra-core --no-cache-dir && \
      # Enable jupyter extensions
      jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
