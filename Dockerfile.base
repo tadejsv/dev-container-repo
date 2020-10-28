@@ -1,5 +1,5 @@
 ARG UBUNTU_VERSION=18.04
-FROM ubuntu/${UBUNTU_VERSION}
+FROM ubuntu:${UBUNTU_VERSION}
 
 # Prepare shell and file system
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 SHELL=/bin/bash
