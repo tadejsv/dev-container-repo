@@ -22,7 +22,7 @@ RUN conda install --file py_requirements.txt && \
     npm cache clean --force && \
     conda clean -yaf
 
-FROM ml-dev-base/${USERNAME}
+FROM ml-dev-base:${USERNAME}
 
 # Copy over conda
 ARG USERNAME
