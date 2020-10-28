@@ -28,3 +28,5 @@ FROM ml-dev-base:${USERNAME}
 ARG USERNAME
 COPY --from=conda /opt/conda /opt/conda
 RUN sudo chown ${USERNAME}:${USERNAME} /opt/conda
+RUN echo "ls -l /opt"
+RUN echo "ls -l /opt/conda"

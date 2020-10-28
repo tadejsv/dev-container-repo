@@ -3,7 +3,7 @@ FROM ml-dev-eda:${USERNAME}
 
 ARG USERNAME
 USER ${USERNAME}
-
+RUN echo "ls -l /opt"
 # Install pytorch
 RUN  conda install pytorch torchvision cudatoolkit=10.2 -y -c pytorch && \
      conda install pytorch-lightning && \
