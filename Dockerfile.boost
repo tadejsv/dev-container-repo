@@ -1,25 +1,26 @@
+ARG UBUNTU_VERSION=18.04
+ARG CUDA=10.2
 ARG USERNAME
-FROM ml-dev-eda:${USERNAME}
 
-ENV NCCL_VERSION 2.7.8
+FROM ml-dev-eda:${UBUNTU_VERSION} AS stage_1
 
+# Install Catboost and xgboost
+RUN pip install xgboost --no-cache-dir
+RUN conda install catboost && conda clean -yaf
+
+FROM ml-dev-base:${USERNAME}-${CUDA}
+
+# Install LGBM dependencies
 RUN DEBIAN_FRONTEND=noninteractive sudo apt-get update && \
     sudo apt-get install -y --no-install-recommends \
-    # Move the CUDA up to devel
-    cuda-libraries-$CUDA \
-    cuda-nvtx-$CUDA \
-    libcublas10 \
-    libnccl2=$NCCL_VERSION-1+cuda$CUDA \
-    cuda-nvml-dev-$CUDA \
-    cuda-command-line-tools-$CUDA \
-    cuda-libraries-dev-$CUDA \
-    cuda-minimal-build-$CUDA \
-    libnccl-dev=$NCCL_VERSION-1+cuda$CUDA \
-    libcublas-dev \
-    # Install LGBM dependencies
     libboost-dev libboost-system-dev libboost-filesystem-dev && \
     # Clean up
     sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
+
+# Copy over conda
+ARG USERNAME
+COPY --from=stage_1 /opt/conda /opt/conda
+RUN sudo chown ${USERNAME}:${USERNAME} /opt/conda
 
 # Install LGBM
 RUN cd $HOME && git clone --recursive https://github.com/microsoft/LightGBM && \
@@ -30,9 +31,3 @@ RUN cd $HOME && git clone --recursive https://github.com/microsoft/LightGBM && \
     cd $HOME && rm -rf LightGBM && \
     sudo mkdir -p /etc/OpenCL/vendors && \ 
     echo "libnvidia-opencl.so.1" | sudo tee /etc/OpenCL/vendors/nvidia.icd
-
-# Install XGBoost
-RUN pip install xgboost --no-cache-dir
-
-# Install Catboost
-RUN conda install catboost && conda clean -yaf

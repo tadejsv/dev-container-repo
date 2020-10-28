@@ -1,70 +1,30 @@
-ARG CUDA=10.2
 ARG UBUNTU_VERSION=18.04
-FROM nvidia/cuda:${CUDA}-base-ubuntu${UBUNTU_VERSION}
-
-# For later
-ARG CUDA
-ENV CUDA=${CUDA}
-ARG UBUNTU_VERSION
-ENV UBUNTU_VERSION=${UBUNTU_VERSION}
-
-# Prepare shell and file system
-ENV LANG C.UTF-8
-ENV SHELL /bin/bash
-SHELL ["/bin/bash", "-c"]
-
-# Install all system stuff, including node
-COPY sys_requirements.txt /
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y --no-install-recommends \
-         $(cat sys_requirements.txt) && \
-     curl -sL https://deb.nodesource.com/setup_14.x | bash -E - && \
-     apt-get install nodejs -y --no-install-recommends && \
-     apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Create the sudo user
 ARG USERNAME
-ARG UID
-RUN echo "${USERNAME} (${UID})"
-RUN useradd ${USERNAME} -u ${UID} -G sudo -s /bin/bash && \
-    echo ${USERNAME}' ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    chown ${USERNAME}:${USERNAME} /home
+FROM tadejsv/miniconda:${UBUNTU_VERSION} AS conda
 
-USER ${USERNAME}
-ENV HOME /home
-WORKDIR ${HOME}
-
-# Prepare python requirements file
-ENV PATH ${HOME}/conda/bin:$PATH
-COPY py_requirements.txt ${HOME}
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash -E - && \
+    apt-get install nodejs -y --no-install-recommends && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install all python stuff, Jupyter with extensions included
-RUN SHA=1 curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-     chmod +x ~/miniconda.sh && \
-     ~/miniconda.sh -b -p $HOME/conda && \
-     rm ~/miniconda.sh && \
-     conda config --system --prepend channels conda-forge && conda config --set always_yes yes &&\
-     # Install basic python stuff (second line to prevent installation of old node.js + get current hydra)
-     conda update ruamel_yaml && conda install --file py_requirements.txt && \
-     pip install jupyterlab_code_formatter hydra-core --no-cache-dir && \
-     # Enable jupyter extensions
-     jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
-     jupyter labextension install @jupyterlab/toc --no-build && \
-     jupyter labextension install @ryantam626/jupyterlab_code_formatter --no-build && \
-     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \ 
-     jupyter serverextension enable --py jupyterlab_code_formatter --sys-prefix && \
-     jupyter lab build && \
-     # Some cleanup + permissions change
-     npm cache clean --force && \
-     conda clean -yaf
+COPY py_requirements.txt /
+RUN conda install --file py_requirements.txt && \
+    pip install jupyterlab_code_formatter hydra-core --no-cache-dir && \
+    # Enable jupyter extensions
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
+    jupyter labextension install @jupyterlab/toc --no-build && \
+    jupyter labextension install @ryantam626/jupyterlab_code_formatter --no-build && \
+    jupyter nbextension enable --py widgetsnbextension --sys-prefix && \ 
+    jupyter serverextension enable --py jupyterlab_code_formatter --sys-prefix && \
+    jupyter lab build && \
+    # Some cleanup + permissions change
+    npm cache clean --force && \
+    conda clean -yaf
 
-# Open ports for Jupyter and Tensorboard
-EXPOSE 8888 6006
+FROM ml-dev-base/${USERNAME}
 
-# Transfer Jupyter settings and main script
-RUN jupyter notebook --generate-config
-COPY jupyter_notebook_config.py $HOME/.jupyter/
-
-# Prepare entrypoint and mount folder
-WORKDIR $HOME/ws
-CMD ["jupyter", "lab"]
+# Copy over conda
+ARG USERNAME
+COPY --from=conda /opt/conda /opt/conda
+RUN sudo chown ${USERNAME}:${USERNAME} /opt/conda

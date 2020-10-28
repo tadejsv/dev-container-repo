@@ -5,12 +5,15 @@
 
 # Check arguments
 ALLOWED_TAGS=( 'pytorch' 'tensorflow' 'boost' )
+BUILD_TAGS=( 'eda' )
 
 for arg in $@
 do
-    if [[ ! " ${ALLOWED_TAGS[@]} " =~ " ${arg} " ]]; then
+    if [[ ! " ${ALLOWED_TAGS[@]} " =~ " $arg " ]]; then
        echo "Argument $arg is not on the list of allowed tags."
        exit 1
+    else
+        BUILD_TAGS+=( $arg )
     fi
 done
 
@@ -39,14 +42,14 @@ cd ml-docker
 
 # Build base image
 echo -e "\n***********************************************"
-echo "Begining eda (base) image build"
+echo "Begining base image build"
 echo -e "***********************************************\n"
 sleep 1
 
-docker build --build-arg USERNAME=$UNAME --build-arg UID="$(id -u)" -t ml-dev-eda:$UNAME -f Dockerfile.eda .
+docker build --build-arg USERNAME=$UNAME --build-arg UID="$(id -u)" -t ml-dev-base:$UNAME -f Dockerfile.base .
 
 # Build other images, if any
-for arg in $@
+for arg in ${BUILD_TAGS[@]}
 do
     echo -e "\n***********************************************"
     echo "Begining $arg image build"
@@ -66,14 +69,23 @@ sleep 1
 DOCKER_COM="docker run --init --rm -d --name alba --gpus all --ipc=host -p 8888:8888 -v \"\$(pwd)\":/home/ws "
 DOCKER_COM_CPU="docker run --init --rm -d --name alba --ipc=host -p 8888:8888 -v \"\$(pwd)\":/home/ws "
 
-echo -e '\n# Docker ML development images aliases' >> $SHFILE
-echo "alias ml-dev-eda='$DOCKER_COM ml-dev-eda:$UNAME'" >> $SHFILE
-echo "alias ml-dev-eda-cpu='$DOCKER_COM_CPU ml-dev-eda:$UNAME'" >> $SHFILE
+function logifnew {
+    echo $1
+    if grep -Fxq "$1" $SHFILE
+    then
+        exit
+    else
+        echo "$1" >> $SHFILE
+    fi
+}
 
-for arg in $@
+echo -e '\n'
+logifnew '# Docker ML development images aliases'
+
+for arg in ${BUILD_TAGS[@]}
 do
-    echo "alias ml-dev-$arg='$DOCKER_COM ml-dev-$arg:$UNAME'" >> $SHFILE
-    echo "alias ml-dev-$arg-cpu='$DOCKER_COM_CPU ml-dev-$arg:$UNAME'" >> $SHFILE
+    logifnew "alias ml-dev-$arg='$DOCKER_COM ml-dev-$arg:$UNAME'"
+    logifnew "alias ml-dev-$arg-cpu='$DOCKER_COM_CPU ml-dev-$arg:$UNAME'"
 done
 
 # Clean up

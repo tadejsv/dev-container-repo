@@ -2,10 +2,11 @@ ARG USERNAME
 FROM ml-dev-eda:${USERNAME}
 
 # Install pytorch
-RUN  conda install pytorch torchvision torchtext cudatoolkit=10.2 -y -c pytorch && \
+RUN  conda install pytorch torchvision cudatoolkit=10.2 -y -c pytorch && \
      conda install pytorch-lightning && \
      pip install transformers --no-cache-dir && \
      # Some cleanup
      conda clean -yaf && rm -rf /home/.cache
+
 # Needed to avoid warnings with transformers
 ENV TOKENIZERS_PARALLELISM true

@@ -9,7 +9,6 @@ scikit-learn
 eli5
 spacy
 seaborn
-plotly
 jupyterlab
 ipywidgets
 widgetsnbextension
