@@ -72,7 +72,7 @@ function logifnew {
     echo $1
     if grep -Fxq "$1" $SHFILE
     then
-        exit
+        exit 0
     else
         echo "$1" >> $SHFILE
     fi
