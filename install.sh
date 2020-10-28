@@ -56,7 +56,7 @@ do
     echo -e "***********************************************\n"
     sleep 1
 
-    docker build --build-arg USERNAME=$UNAME -t ml-dev-$arg:$UNAME -f Dockerfile.$arg .
+    docker build --build-arg USERNAME=$UNAME --build-arg UID="$(id -u)" -t ml-dev-$arg:$UNAME -f Dockerfile.$arg .
 done
 
 # Create shortcuts

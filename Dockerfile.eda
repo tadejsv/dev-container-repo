@@ -22,11 +22,13 @@ RUN conda install --file py_requirements.txt && \
     npm cache clean --force && \
     conda clean -yaf
 
+ARG USERNAME
+ARG UID
+RUN useradd ${USERNAME} -u ${UID} -G sudo
+RUN chown -R ${USERNAME}:${USERNAME} /opt/
+
 FROM ml-dev-base:${USERNAME}
 
 # Copy over conda
 ARG USERNAME
-COPY --from=conda /opt/conda /opt/conda
-RUN sudo chown ${USERNAME}:${USERNAME} /opt/conda
-RUN echo "ls -l /opt"
-RUN echo "ls -l /opt/conda"
+COPY --from=conda /opt/ /opt/

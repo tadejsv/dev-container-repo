@@ -19,7 +19,7 @@ RUN DEBIAN_FRONTEND=noninteractive sudo apt-get update && \
 
 # Copy over conda
 ARG USERNAME
-COPY --from=stage_1 /opt/conda /opt/conda
+COPY --from=stage_1 /opt/ /opt/
 RUN sudo chown ${USERNAME}:${USERNAME} /opt/conda
 
 # Install LGBM
