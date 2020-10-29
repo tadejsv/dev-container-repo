@@ -48,6 +48,10 @@ sleep 1
 
 docker build --build-arg USERNAME=$UNAME --build-arg UID="$(id -u)" -t ml-dev-base:$UNAME -f Dockerfile.base .
 
+if [[ " ${BUILD_TAGS[@]} " =~ " boost " ]]; then
+    docker build --build-arg USERNAME=$UNAME --build-arg UID="$(id -u)" -t ml-dev-cuda-base:$UNAME -f Dockerfile_cuda_dev.base .
+fi
+
 # Build other images, if any
 for arg in ${BUILD_TAGS[@]}
 do
