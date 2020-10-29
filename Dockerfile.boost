@@ -1,7 +1,5 @@
-ARG UBUNTU_VERSION=18.04
 ARG USERNAME
-
-FROM ml-dev-eda:${UBUNTU_VERSION} AS stage_1
+FROM ml-dev-eda:${USERNAME} AS stage_1
 
 # Install Catboost and xgboost
 RUN pip install xgboost --no-cache-dir
