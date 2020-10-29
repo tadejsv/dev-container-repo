@@ -21,8 +21,9 @@ ARG USERNAME
 ARG UID
 RUN useradd ${USERNAME} -u ${UID} -G sudo -s /bin/bash && \
     echo ${USERNAME}' ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    chown ${USERNAME}:${USERNAME} /home
+    mkdir /home/ws && chown -R ${USERNAME}:${USERNAME} /home
 USER ${USERNAME}
+ENV HOME=/home
 
 # Open ports for Jupyter and Tensorboard
 EXPOSE 8888 6006

@@ -19,11 +19,12 @@ ARG USERNAME
 COPY --from=stage_1 --chown=${USERNAME} /opt/ /opt/
 
 # Install LGBM
-RUN cd $HOME && git clone --recursive https://github.com/microsoft/LightGBM && \
+ARG CUDA=10.2
+RUN git clone --recursive https://github.com/microsoft/LightGBM && \
     cd LightGBM && mkdir build && cd build && \
     cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
     make OPENCL_HEADERS=/usr/local/cuda-$CUDA/targets/x86_64-linux/include LIBOPENCL=/usr/local/cuda-$CUDA/targets/x86_64-linux/lib && \
     cd ../python-package && python setup.py install --precompile && \
-    cd $HOME && rm -rf LightGBM && \
+    cd ../.. && rm -rf LightGBM && \
     sudo mkdir -p /etc/OpenCL/vendors && \ 
     echo "libnvidia-opencl.so.1" | sudo tee /etc/OpenCL/vendors/nvidia.icd

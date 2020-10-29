@@ -1,6 +1,6 @@
 ARG UBUNTU_VERSION=18.04
 ARG CUDA=10.2
-FROM nvidia/cuda:${CUDA}-dev-ubuntu${UBUNTU_VERSION}
+FROM nvidia/cuda:${CUDA}-devel-ubuntu${UBUNTU_VERSION}
 
 # Prepare shell and file system
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 SHELL=/bin/bash
@@ -21,8 +21,9 @@ ARG USERNAME
 ARG UID
 RUN useradd ${USERNAME} -u ${UID} -G sudo -s /bin/bash && \
     echo ${USERNAME}' ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    chown ${USERNAME}:${USERNAME} /home
+    mkdir /home/ws && chown -R ${USERNAME}:${USERNAME} /home
 USER ${USERNAME}
+ENV HOME=/home
 
 # Open ports for Jupyter and Tensorboard
 EXPOSE 8888 6006

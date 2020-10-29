@@ -108,10 +108,10 @@ There are 4 different versions of the images (size means size when extracted):
 
 | Name | Size | Description |
 | ---- | ---- | ----------- |
-| [`eda`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.eda) | 3.21GB | Based on [`10.2-base-ubuntu18.04`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/10.2/ubuntu18.04-x86_64/base/Dockerfile) CUDA image. Uses conda, and comes with the following packages installed: <ul><li>**Basic**: numpy, pandas and scipy</li><li>**Plotting**: matplotlib, seaborn and plotly</li><li>**ML**: statsmodels, scikit-learn, eli5, spacy</li><li>**Jupyter lab** + TOC + code formatter extensions</li><li>**Utilities**: Click, hydra, pytest</li></ul>|
-| [`pytorch`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.pytorch) | 5.55GB| based on `eda`, comes with pytorch (with its own CUDA), torchvision, torchtext, pytorch-lightning  and 🤗transformers installed. |
+| [`eda`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.eda) | 2.08GB | Based on [`10.2-base-ubuntu18.04`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/10.2/ubuntu18.04-x86_64/base/Dockerfile) CUDA image. Uses conda, and comes with the following packages installed: <ul><li>**Basic**: numpy, pandas and scipy</li><li>**Plotting**: matplotlib, seaborn and plotly</li><li>**ML**: statsmodels, scikit-learn, eli5, spacy</li><li>**Jupyter lab** + TOC + code formatter extensions</li><li>**Utilities**: Click, hydra, pytest</li></ul>|
+| [`pytorch`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.pytorch) | 5.18GB| based on `eda`, comes with pytorch (with its own CUDA), torchvision, torchtext, pytorch-lightning  and 🤗transformers installed. |
 | [`tf`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.tensorflow) | 6.04GB | based on `eda`, comes with tensorflow and 🤗transformers installed (CUDA installed system-wide) |
-| [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) | 6.43GB | based on `eda`, comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). CUDA installed up to [`devel`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/devel/Dockerfile) level. |
+| [`boost`](https://github.com/tadejsv/ml-docker/blob/master/Dockerfile.boost) | 5.39GB | based on `eda`, comes with the 3 main gradient boosting libraries installed (Catboost, LGBM and XGboost). CUDA installed up to [`devel`](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/ubuntu18.04/10.1/devel/Dockerfile) level. |
 
 ## Extending the image
 
