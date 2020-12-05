@@ -1,6 +1,6 @@
 ARG UBUNTU_VERSION=18.04
 ARG CUDA=10.2
-FROM nvidia/cuda:${CUDA}-base-ubuntu${UBUNTU_VERSION}
+FROM nvidia/cuda:$CUDA-base-ubuntu${UBUNTU_VERSION}
 
 # Prepare shell and file system
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 SHELL=/bin/bash
@@ -8,29 +8,30 @@ ENV PATH /opt/conda/bin:$PATH
 SHELL ["/bin/bash", "-c"]
 
 # Install all system stuff, including node
-COPY sys_requirements.txt /
+COPY sys_requirements.txt /tmp
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y --no-install-recommends \
-    $(cat sys_requirements.txt) && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash -E - && \
-    apt-get install nodejs -y --no-install-recommends && \
+    $(cat tmp/sys_requirements.txt) && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create the sudo user
 ARG USERNAME
 ARG UID
-RUN useradd ${USERNAME} -u ${UID} -G sudo -s /bin/bash && \
-    echo ${USERNAME}' ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    mkdir /home/ws && chown -R ${USERNAME}:${USERNAME} /home
-USER ${USERNAME}
-ENV HOME=/home
+RUN useradd $USERNAME -u $UID -G sudo -s /bin/bash -m && \
+    echo $USERNAME' ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER $USERNAME
+ENV HOME=/home/$USERNAME
 
-# Open ports for Jupyter and Tensorboard
-EXPOSE 8888 6006
+# Copy over conda and bashrc
+ARG UBUNTU_VERSION
+COPY --from=tadejsv/miniconda:$UBUNTU_VERSION --chown=$USERNAME /opt/ /opt/
+RUN ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc
 
 # Jupyter config
 COPY jupyter_notebook_config.py $HOME/.jupyter/
 
 # Prepare entrypoint and mount folder
+RUN mkdir $HOME/ws
 WORKDIR $HOME/ws
-CMD ["jupyter", "lab"]
