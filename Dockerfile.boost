@@ -1,10 +1,4 @@
 ARG USERNAME
-FROM ml-dev-eda:${USERNAME} AS stage_1
-
-# Install Catboost and xgboost
-RUN pip install xgboost --no-cache-dir
-RUN conda install catboost && conda clean -yaf
-
 FROM ml-dev-cuda-base:${USERNAME}
 
 # Install LGBM dependencies
@@ -24,7 +18,6 @@ RUN git clone --recursive https://github.com/microsoft/LightGBM && \
     cd LightGBM && mkdir build && cd build && \
     cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
     make OPENCL_HEADERS=/usr/local/cuda-$CUDA/targets/x86_64-linux/include LIBOPENCL=/usr/local/cuda-$CUDA/targets/x86_64-linux/lib && \
-    cd ../python-package && python setup.py install --precompile && \
     cd ../.. && rm -rf LightGBM && \
     sudo mkdir -p /etc/OpenCL/vendors && \ 
     echo "libnvidia-opencl.so.1" | sudo tee /etc/OpenCL/vendors/nvidia.icd

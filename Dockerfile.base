@@ -1,6 +1,7 @@
-ARG UBUNTU_VERSION=18.04
-ARG CUDA=10.2
-FROM nvidia/cuda:$CUDA-base-ubuntu${UBUNTU_VERSION}
+ARG UBUNTU_VERSION=20.04
+ARG CUDA=11.1
+ARG CUDA_LEVEL=base
+FROM nvidia/cuda:${CUDA}-${CUDA_LEVEL}-ubuntu${UBUNTU_VERSION}
 
 # Prepare shell and file system
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 SHELL=/bin/bash

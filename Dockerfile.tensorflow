@@ -1,5 +1,5 @@
 ARG USERNAME
-FROM ml-dev-eda:${USERNAME}
+FROM ml-dev-base:${USERNAME}
 
 ARG CUDNN=7.6.5.32-1
 ARG CUDNN_MAJOR_VERSION=7
@@ -39,8 +39,3 @@ ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda/lib64:$LD
 RUN sudo ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 \
     && echo "/usr/local/cuda/lib64/stubs" | sudo tee /etc/ld.so.conf.d/z-cuda-stubs.conf \
     && sudo ldconfig
-
-# Install tensorflow and transformers
-RUN pip install tensorflow tensorflow_datasets transformers --no-cache-dir
-# Needed to avoid warnings with transformers
-ENV TOKENIZERS_PARALLELISM true
