@@ -24,7 +24,7 @@ echo -e "\n***********************************************"
 echo "Cloning tadejsv/ml-docker repository"
 echo -e "***********************************************\n"
 
-cd tmp/
+cd /tmp
 git clone --depth=1 git@github.com:tadejsv/ml-docker.git
 
 # cd into the repository
