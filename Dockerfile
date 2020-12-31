@@ -24,8 +24,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Create the sudo user
 ARG USERNAME
 ARG UID
-RUN echo ${USERNAME}
-RUN echo ${UID}
 RUN useradd $USERNAME -u $UID -G sudo -s /bin/bash -m && \
     echo $USERNAME' ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER $USERNAME

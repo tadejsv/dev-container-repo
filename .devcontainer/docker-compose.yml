@@ -11,7 +11,7 @@ services:
       - /opt/dvc/cache:/opt/dvc/cache
       - ..:${HOME}/ws:cached
     environment:
-      - WANDB_API_KEY=${WANDB_API_KEY}
+      - WANDB_API_KEY=${WANDB_COMMON_API}
       - TOKENIZERS_PARALLELISM=true
       - WANDB_LOG_CONSOLE=off
     command: /bin/sh -c "while sleep 1000; do :; done"
