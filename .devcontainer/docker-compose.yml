@@ -1,6 +1,6 @@
 services:
   main:
-    build: 
+    build:
       context: ..
       args:
         USERNAME: ${USER}
@@ -10,4 +10,6 @@ services:
       - ${HOME}/.ssh:${HOME}/.ssh:ro
       - /opt/dvc/cache:/opt/dvc/cache
       - ..:${HOME}/ws:cached
+    environment:
+      - "WANDB_API_KEY:${WANDB_API_KEY}"
     command: /bin/sh -c "while sleep 1000; do :; done"
