@@ -1,0 +1,13 @@
+services:
+  main:
+    build: 
+      context: ..
+      args:
+        USERNAME: ${USER}
+        UID: ${UID}
+    volumes:
+      - ${HOME}/.aws:${HOME}/.aws:ro
+      - ${HOME}/.ssh:${HOME}/.ssh:ro
+      - /opt/dvc/cache:/opt/dvc/cache
+      - ..:${HOME}/ws:cached
+    command: /bin/sh -c "while sleep 1000; do :; done"
