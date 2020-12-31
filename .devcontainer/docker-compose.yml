@@ -5,6 +5,7 @@ services:
       args:
         USERNAME: ${USER}
         UID: ${UID}
+    runtime: nvidia
     volumes:
       - ${HOME}/.aws:${HOME}/.aws:ro
       - ${HOME}/.ssh:${HOME}/.ssh:ro

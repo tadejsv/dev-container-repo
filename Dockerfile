@@ -1,13 +1,15 @@
 ARG UBUNTU_VERSION=20.04
+ARG CUDA_VERSION=11.0
 FROM continuumio/miniconda3 AS conda
 
 COPY env.yml /
 COPY .devcontainer/env_dev.yml /
 RUN /opt/conda/bin/conda update conda -c conda-forge && \
-    /opt/conda/bin/conda env update -f /env.yml -f /env_dev.yml -n base && \
+    /opt/conda/bin/conda env update -f /env.yml -n base && \
+    /opt/conda/bin/conda env update -f /env_dev.yml -n base && \
     /opt/conda/bin/conda clean -afy
 
-FROM ubuntu:${UBUNTU_VERSION}
+FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu${UBUNTU_VERSION}
 
 # Prepare shell and file system
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 SHELL=/bin/bash
