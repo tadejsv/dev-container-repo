@@ -10,7 +10,7 @@ services:
       - ${HOME}/.aws:${HOME}/.aws:ro
       - ${HOME}/.ssh:${HOME}/.ssh:ro
       - /opt/dvc/cache:/opt/dvc/cache
-      - ..:${HOME}/ws:cached
+      - ..:${HOME}/ws
     environment:
       - WANDB_API_KEY=${WANDB_COMMON_API}
       - TOKENIZERS_PARALLELISM=true
