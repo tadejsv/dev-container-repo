@@ -2,7 +2,7 @@
     "name": "Examle dev container",
     "dockerComposeFile": "docker-compose.yml",
     "service": "main",
-    "shutdownAction": "stopContainer",
+    "shutdownAction": "stopCompose",
     "workspaceFolder": "${localEnv:HOME}/ws",
     "forwardPorts": [8888],
     "extensions": [

@@ -38,7 +38,7 @@ RUN sudo ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo "conda activate base" >> ~/.bashrc
 
 # Jupyter config
-COPY --chown=$USERNAME jupyter_lab_config.py $HOME/.jupyter/ 
+COPY --chown=$USERNAME .devcontainer/jupyter_lab_config.py $HOME/.jupyter/ 
 
 # Prepare entrypoint and mount folder
 RUN mkdir $HOME/ws
