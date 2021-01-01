@@ -6,7 +6,7 @@ The container itself will only take care of running the code, the files/data and
 
 ## Prerequisites
 
-You should have [docker](), [docker-compose]() and [VSCode]() installed - as well as [NVIDIA Docker container runtime]() and [NVIDIA drivers](), unless you
+You should have [docker](https://docs.docker.com/get-docker/), [docker-compose](https://docs.docker.com/compose/install/) and [VSCode](https://code.visualstudio.com/docs/setup/setup-overview) installed - as well as [NVIDIA Docker container runtime](https://github.com/NVIDIA/nvidia-docker) and [NVIDIA drivers](https://github.com/NVIDIA/nvidia-docker/wiki/Frequently-Asked-Questions#how-do-i-install-the-nvidia-driver), unless you
 plan run the container ona a [CPU Only](#cpu-only) machine.
 
 Additionally, you need to expose your *user id* as an environmental variable `UID`. If you use bash or zsh, you do this by 
@@ -17,7 +17,7 @@ export UID
 
 ## Quickstart
 
-Starting up a development container is easy. First, open the repository (locally) in VSCode, then press  <kbd>Ctrl</kbd> + <kbd>shift</kbd> + <kbd>P</kbd> and type/select "Reopen in Container".
+Starting up a development container is easy. First, open the repository in VSCode, then press  <kbd>Ctrl</kbd> + <kbd>shift</kbd> + <kbd>P</kbd> and type/select "Reopen in Container".
 
 But before you do that, you might consider adjusting this template to your needs, as explained in the next section.
 
@@ -66,6 +66,28 @@ Apart from that, it adds some minor authetincation env vars - in this case, the 
 ### `.devcontainer/env_dev.yml`
 
 This conda environment file specifies the requirements for development (they will be added to the base environment) that are not part of the "base" `env.yml`. In this case it includes `pytest`, `flake8` and `jupyterlab` with `ipywidgets`.
+
+### `.devcontainer/jupyter_lab_config.py`
+
+This is the config file for Jupyter Lab with a few useful presets: namely, that no browser should be opened (as you will connect open Jupyter lab in a browser outside of the container), a default password (can you guess what it is 😉) and the port. You should definetly consider editing other defaults here.
+
+### `Dockerfile`
+
+This is the real "meat" of this whole thing. This creates a container based on the base CUDA image (which by itself does not have drivers or CUDA installed), installs all the system and python requirements and creates a user corresponding to your current local user.
+
+If you only use Pytorch-related things, you don't need to edit this file. However, if you are using Tensorflow, or something else, then at minimum you'll want to change the base image, so that GPU support will work for you.
+
+### `env.yml`
+
+This is a conda environment, defining all the base (non-development) requirements of your project. It's a level above basic, so you can see different things in play: it uses custom channels, defines what python version to use, and installs CUDA together with pytorch (easy, right?).
+
+The `name` field has no effect for the development container, but is there if you want to develop locally.
+
+You should definetly edit this file to your needs.
+
+### `sys_requirements.txt`
+
+This is a minimal system requirements (stuff you install with `apt-get`) file. If your project is not Pytorch-based, you'll probably need to add stuff here.
 
 ## CPU Only
 
