@@ -1,6 +1,6 @@
 {
     "name": "Examle dev container",
-    "dockerComposeFile": "docker-compose.yml",
+    "dockerComposeFile": "../docker-compose.yml",
     "service": "main",
     "shutdownAction": "stopCompose",
     "workspaceFolder": "${localEnv:HOME}/ws",
