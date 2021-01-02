@@ -1,4 +1,4 @@
-# VSCode development container repository template for ML projects
+# VSCode Development Container Template
 
 This template enables you to use a full-fledged containerized development environment for your machine learning projects - all with VSCode!
 
