@@ -9,9 +9,10 @@ The container itself will only take care of running the code, the files/data and
 You should have [docker](https://docs.docker.com/get-docker/), [docker-compose](https://docs.docker.com/compose/install/) and [VSCode](https://code.visualstudio.com/docs/setup/setup-overview) installed - as well as [NVIDIA Docker container runtime](https://github.com/NVIDIA/nvidia-docker) and [NVIDIA drivers](https://github.com/NVIDIA/nvidia-docker/wiki/Frequently-Asked-Questions#how-do-i-install-the-nvidia-driver), unless you
 plan run the container ona a [CPU-only](#cpu-only) machine.
 
-Additionally, you need to expose your *user id* as an environmental variable `UID`. If you use bash or zsh, you do this by 
+Additionally, you need to expose your *user id* as an environmental variable `UID` . If you use bash or zsh, you do this by 
 adding the following to your `.bashrc` or `.zshrc` file:
-```
+
+``` 
 export UID
 ```
 
@@ -23,17 +24,15 @@ Starting up a development container is easy. First, open the repository in VSCod
 
 But before you do that, you might consider adjusting this template to your needs, as explained in the next section.
 
-
 ## Quickstart: remote
 
 This instructions are for the following scenario: your files and credentials are on a remote **host** machine (such as an AWS server, desktop workstation), and the only use of your **local** machine is to connect to the host.
-
 
 ## What's in this template
 
 This template does a few things, and it's useful to know what they are, so you know what to adjust. I'll explain it by describing what is the function of each file in this repo. Here's a directory tree diagram:
 
-```
+``` 
 .
 ├── .devcontainer
 │   ├── devcontainer.json
@@ -49,7 +48,7 @@ This template does a few things, and it's useful to know what they are, so you k
 
 ### `.devcontainer/devcontainer.json`
 
-This defines the VSCode development container. It delegates the "base" of the container itself to `docker-compose.yml`, and focuses on:
+This defines the VSCode development container. It delegates the "base" of the container itself to `docker-compose.yml` , and focuses on:
 
 1. Forwarding ports to your machine - in this case port 8888, which is usually used for Jupyter Lab.
 2. Installing VSCode extensions in the container - here these are the Python extension, GitLens, as well as VSCode icons pack and a yaml formatter.
@@ -57,7 +56,7 @@ This defines the VSCode development container. It delegates the "base" of the co
 
 ### `.devcontainer/env_dev.yml`
 
-This conda environment file specifies the requirements for development (they will be added to the base environment) that are not part of the "base" `env.yml`. In this case it includes `pytest`, `flake8` and `jupyterlab` with `ipywidgets`.
+This conda environment file specifies the requirements for development (they will be added to the base environment) that are not part of the "base" `env.yml` . In this case it includes `pytest` , `flake8` and `jupyterlab` with `ipywidgets` .
 
 ### `.docker-compose.yml`
 
@@ -91,7 +90,7 @@ You should definetly edit this file to your needs.
 
 ### `sys_requirements.txt`
 
-This is a minimal system requirements (stuff you install with `apt-get`) file. If your project is not Pytorch-based, you'll probably need to add stuff here.
+This is a minimal system requirements (stuff you install with `apt-get` ) file. If your project is not Pytorch-based, you'll probably need to add stuff here.
 
 ## CPU Only
 
@@ -100,4 +99,4 @@ If you want to use this on a CPU-only device, you only need to make two minor ch
 1. In `env.yml` change `cudatoolkit=11.0` to `cpuonly`. This should also reduce the size of the container significantly, and speed up the build a lot.
 2. In `.devcontainer/docker-compose.yml` remove `runtime: nvidia`
 
-If you wish you may also replace the base image in `Dockerfile`, though that will only save you ~50MB.
+If you wish you may also replace the base image in `Dockerfile` , though that will only save you ~50MB.

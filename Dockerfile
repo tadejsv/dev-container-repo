@@ -1,13 +1,13 @@
 ARG UBUNTU_VERSION=20.04
 ARG CUDA_VERSION=11.0
-# FROM continuumio/miniconda3 AS conda
+FROM continuumio/miniconda3 AS conda
 
-# COPY env.yml /
-# COPY .devcontainer/env_dev.yml /
-# RUN /opt/conda/bin/conda update conda -c conda-forge && \
-#     /opt/conda/bin/conda env update -f /env.yml -n base && \
-#     /opt/conda/bin/conda env update -f /env_dev.yml -n base && \
-#     /opt/conda/bin/conda clean -afy
+COPY env.yml /
+COPY .devcontainer/env_dev.yml /
+RUN /opt/conda/bin/conda update conda -c conda-forge && \
+    /opt/conda/bin/conda env update -f /env.yml -n base && \
+    /opt/conda/bin/conda env update -f /env_dev.yml -n base && \
+    /opt/conda/bin/conda clean -afy
 
 FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu${UBUNTU_VERSION}
 
@@ -17,11 +17,11 @@ ENV PATH /opt/conda/bin:$PATH
 SHELL ["/bin/bash", "-c"]
 
 # Install all system stuff, including node
-# COPY sys_requirements.txt /tmp
-# ARG DEBIAN_FRONTEND="noninteractive"
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#     $(cat tmp/sys_requirements.txt) && \
-#     apt-get clean && rm -rf /var/lib/apt/lists/*
+COPY sys_requirements.txt /tmp
+ARG DEBIAN_FRONTEND="noninteractive"
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    $(cat tmp/sys_requirements.txt) && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create the sudo user
 ARG USERNAME
@@ -32,10 +32,10 @@ USER $USERNAME
 ENV HOME=/home/$USERNAME
 
 # Copy over conda and bashrc, install environment
-# COPY --from=conda --chown=$USERNAME /opt/ /opt/
-# RUN sudo ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-#     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-#     echo "conda activate base" >> ~/.bashrc
+COPY --from=conda --chown=$USERNAME /opt/ /opt/
+RUN sudo ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc
 
 # Jupyter config
 COPY --chown=$USERNAME .devcontainer/jupyter_lab_config.py $HOME/.jupyter/ 
