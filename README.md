@@ -12,21 +12,33 @@ plan run the container ona a [CPU-only](#cpu-only) machine.
 Additionally, you need to expose your *user id* as an environmental variable `UID` . If you use bash or zsh, you do this by 
 adding the following to your `.bashrc` or `.zshrc` file:
 
-``` 
+```
 export UID
 ```
 
 ## Quickstart: local
 
-This assumes that all your files are on a local machine, where you want to run the container. If this is not the case, check out the [remote](#quickstart-remote) section.
+This assumes that all your files are on a local machine, where you also want to run the container. If this is not the case, check out the [remote](#quickstart-remote) section.
 
-Starting up a development container is easy. First, open the repository in VSCode, then press  <kbd>Ctrl</kbd> + <kbd>shift</kbd> + <kbd>P</kbd> and type/select "Reopen in Container".
+All you need to do is to open the repository in VSCode, press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> and type/select "Reopen in Container".
 
 But before you do that, you might consider adjusting this template to your needs, as explained in the next section.
 
 ## Quickstart: remote
 
 This instructions are for the following scenario: your files and credentials are on a remote **host** machine (such as an AWS server, desktop workstation), and the only use of your **local** machine is to connect to the host.
+
+Before we get started, there are some additional prerequisites. All the [usual prerequisites](#prerequisites) need to be fulfilled on your host machine, while you only really need Docker, Docker Compose and VSCode on your local machine. Next, you need to set the `docker.host` setting in VSCode on your local machine to point at your host machine - see [here](https://code.visualstudio.com/docs/remote/containers-advanced#_a-basic-remote-example) for instructions.
+
+Once this is done, you need to open the repository on the host machine (you can do that through SSH), and spin up docker compose there using
+
+``` 
+docker-compose up -d
+```
+
+You can close the remote terminal after that. Next, open the repository in VSCode on your local machine, press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> and type/select "Reopen in Container".
+
+This way, everything will work as expected - even the port 8888 of the remote container will be mapped to port 8888 in your local machine.
 
 ## What's in this template
 
