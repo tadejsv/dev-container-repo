@@ -1,11 +1,11 @@
 services:
   main:
     build:
-      context: ..
+      context: .
       args:
         USERNAME: ${USER}
         UID: ${UID}
-    runtime: nvidia
+    # runtime: nvidia
     volumes:
       - ${HOME}/.aws:${HOME}/.aws:ro
       - ${HOME}/.ssh:${HOME}/.ssh:ro
