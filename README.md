@@ -81,6 +81,6 @@ This template does a few things, and it's useful to know what they are, so you k
 
 If you want to use this on a CPU-only device, you need to make three minor changes:
 
-1. In `env.yml` change `cudatoolkit=11.0` to `cpuonly`. This should also reduce the size of the container significantly, and speed up the build a lot.
+1. In `env.yml` change `cudatoolkit=11.0` to `cpuonly`.
 2. In `.devcontainer/docker-compose.yml` remove `runtime: nvidia`
 3. In `Dockerfile`, change the `nvidia/cuda...` base image to `ubuntu:${UBUNTU_VERSION}`
