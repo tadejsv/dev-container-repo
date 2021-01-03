@@ -37,9 +37,7 @@ But before you do that, you might consider adjusting this template to your needs
 
 This instructions are for the following scenario: your files and credentials are on a remote **host** machine (such as an AWS server, desktop workstation), and the only use of your **local** machine is to connect to the host.
 
-Next, you need to set the `docker.host` setting in VSCode on your local machine to point at your host machine - see [here](https://code.visualstudio.com/docs/remote/containers-advanced#_a-basic-remote-example) for instructions.
-
-Once this is done, you need to open the repository on the host machine (you can do that through SSH), and spin up docker compose there using
+First, you need to set the `docker.host` setting in VSCode on your local machine to point at your host machine - see [here](https://code.visualstudio.com/docs/remote/containers-advanced#_a-basic-remote-example) for instructions. Next, open the repository on the host machine (you can do that through SSH), and spin up docker compose there using
 
 ``` 
 docker-compose up -d
