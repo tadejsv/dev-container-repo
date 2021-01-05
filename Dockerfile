@@ -41,5 +41,5 @@ RUN sudo ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
 COPY --chown=$USERNAME .devcontainer/jupyter_lab_config.py $HOME/.jupyter/ 
 
 # Prepare entrypoint and mount folder
-RUN mkdir $HOME/ws
-WORKDIR $HOME/ws
+RUN mkdir /ws
+WORKDIR /ws
