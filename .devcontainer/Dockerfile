@@ -4,10 +4,10 @@ FROM continuumio/miniconda3 AS conda
 
 COPY env.yml /
 COPY .devcontainer/env_dev.yml /
-RUN /opt/conda/bin/conda update conda -c conda-forge && \
-    /opt/conda/bin/conda env update -f /env.yml -n base && \
-    /opt/conda/bin/conda env update -f /env_dev.yml -n base && \
-    /opt/conda/bin/conda clean -afy
+RUN conda update conda -c conda-forge && \
+    conda env update -f /env.yml -n base && \
+    conda env update -f /env_dev.yml -n base && \
+    conda clean -afy
 
 FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu${UBUNTU_VERSION}
 
@@ -30,6 +30,7 @@ RUN useradd $USERNAME -u $UID -G sudo -s /bin/bash -m && \
     echo $USERNAME' ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER $USERNAME
 ENV HOME=/home/$USERNAME
+RUN sudo mkdir /ws && sudo chown -R $USERNAME /ws
 
 # Copy over conda and bashrc, install environment
 COPY --from=conda --chown=$USERNAME /opt/ /opt/
@@ -41,5 +42,4 @@ RUN sudo ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
 COPY --chown=$USERNAME .devcontainer/jupyter_lab_config.py $HOME/.jupyter/ 
 
 # Prepare entrypoint and mount folder
-RUN mkdir /ws
 WORKDIR /ws

@@ -35,7 +35,9 @@ But before you do that, you might consider adjusting this template to your needs
 
 ## Quickstart: remote
 
-This instructions are for the following scenario: your files and credentials are on a remote **host** machine (such as an AWS server, desktop workstation), and the only use of your **local** machine is to connect to the host.
+This instructions are for the following scenario: your files and credentials are on a remote **host** machine (such as an AWS server, desktop workstation), and the only use of your **local** machine is to connect to the host. It is required that you have **the same username** on both local and host machine.
+
+> The same username is required, because in `docker-compose.yml` the image create will get tagged with your username. This enables multiple users on the same machine to use development containers, as each user will have a separate container running.
 
 First, you need to set the `docker.host` setting in VSCode on your local machine to point at your host machine - see [here](https://code.visualstudio.com/docs/remote/containers-advanced#_a-basic-remote-example) for instructions. Next, open the repository on the host machine (you can do that through SSH), and spin up docker compose there using
 
@@ -55,25 +57,24 @@ This template does a few things, and it's useful to know what they are, so you k
 .
 ├── .devcontainer
 │   ├── devcontainer.json
+│   ├── docker-compose.yml
+│   ├── Dockerfile
 │   ├── env_dev.yml
 │   └── jupyter_lab_config.py
-├── docker-compose.yml
-├── Dockerfile
 ├── env.yml
 ├── sys_requirements.txt
-├── README.md
-└── .gitignore
+└── ...
 ```
 
 - `.devcontainer/devcontainer.json`: This defines the VSCode development container. It delegates the "base" of the container itself to `docker-compose.yml` , and focuses on forwarding ports, installing VSCode extensions and adjusting VSCode settings.
-- `.devcontainer/env_dev.yml`: This conda environment file specifies the requirements for development (they will be added to the base environment) - for example testing and linting.
-- `.docker-compose.yml`: This file mainly takes care of configuring how the docker container connects to the local file system. Namely, it does these things:
+- `.devcontainer/docker-compose.yml`: This file mainly takes care of configuring how the docker container connects to the local file system. Namely, it does these things:
   - sets the user ID of the user in the container to match the local user, to avoid file permission issues
   - mounts the workspace folder to the container
   - mounts the credentials folders to the container (as read-only): for example, the `.ssh` and `.aws` folders
   - mounts some other folders (in this example the DVC cache) and sets environmental variables credentials
+- `.devcontainer/env_dev.yml`: This conda environment file specifies the requirements for development (they will be added to the base environment) - for example testing and linting.
+- `.devcontainer/Dockerfile`: This is the real "meat" of this whole thing. It creates a container based on the base CUDA image (which by itself does not have drivers or CUDA installed), installs all the system and python requirements and creates a user corresponding to your current local user. If your setup requires some heavier system modification, you should do it here.
 - `.devcontainer/jupyter_lab_config.py`: this sets some useful jupyter notebook/lab presets, such as a password (you should change this) and the default port.
-- `Dockerfile`: This is the real "meat" of this whole thing. It creates a container based on the base CUDA image (which by itself does not have drivers or CUDA installed), installs all the system and python requirements and creates a user corresponding to your current local user. If your setup requires some heavier system modification, you should do it here.
 - `env.yml`: This is a conda environment, defining all the base (non-development) requirements of your project.
 - `sys_requirements.txt`: This is a minimal system requirements (stuff you install with `apt-get` ) file.
 

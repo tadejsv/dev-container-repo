@@ -1,7 +1,9 @@
 services:
   main:
+    image: example_main:${USER}
     build:
-      context: .
+      dockerfile: .devcontainer/Dockerfile
+      context: ..
       args:
         USERNAME: ${USER}
         UID: ${UID}
@@ -10,9 +12,8 @@ services:
       - ${HOME}/.aws:${HOME}/.aws:ro
       - ${HOME}/.ssh:${HOME}/.ssh:ro
       - /opt/dvc/cache:/opt/dvc/cache
-      - .:/ws
+      - ..:/ws
     environment:
-      - WANDB_API_KEY=${WANDB_COMMON_API}
       - TOKENIZERS_PARALLELISM=true
       - WANDB_LOG_CONSOLE=off
     command: /bin/sh -c "while sleep 1000; do :; done"
