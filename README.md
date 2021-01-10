@@ -42,7 +42,7 @@ This instructions are for the following scenario: your files and credentials are
 First, you need to set the `docker.host` setting in VSCode on your local machine to point at your host machine - see [here](https://code.visualstudio.com/docs/remote/containers-advanced#_a-basic-remote-example) for instructions. Next, open the repository on the host machine (you can do that through SSH), and spin up docker compose there using
 
 ``` 
-docker-compose up -d
+docker-compose -f .devcontainer/docker-compose.yml --project-name ${PWD##*/}_devcontainer up -d
 ```
 
 You can close the remote terminal after that. Next, open the repository in VSCode on your local machine, press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> and type/select "Reopen in Container".
