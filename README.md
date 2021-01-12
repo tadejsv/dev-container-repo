@@ -27,7 +27,7 @@ export UID
 
 ## Quickstart: local
 
-This assumes that all your files are on a local machine, where you also want to run the container. If this is not the case, check out the [remote](#quickstart-remote) section.
+This assumes that all your files are on a local machine, where you also want to run the container. If you want to run the container on a remote machine, check out the [remote](#quickstart-remote) section.
 
 All you need to do is to open the repository in VSCode, press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> and type/select "Reopen in Container".
 
