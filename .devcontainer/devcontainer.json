@@ -8,7 +8,6 @@
     "extensions": [
         "eamodio.gitlens",
         "ms-python.python",
-        "vscode-icons-team.vscode-icons",
         "redhat.vscode-yaml",
     ],
     "settings": {
@@ -16,8 +15,9 @@
         "python.formatting.provider": "black",
         "python.formatting.blackArgs": [
             "--line-length",
-            "120"
+            "88"
         ],
-        "python.linting.flake8Enabled": true
+        "python.linting.flake8Enabled": true,
+        "python.linting.pylintEnabled": false        
     }
 }
