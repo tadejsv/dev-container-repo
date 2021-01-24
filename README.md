@@ -31,13 +31,11 @@ This assumes that all your files are on a local machine, where you also want to 
 
 All you need to do is to open the repository in VSCode, press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> and type/select "Reopen in Container".
 
-But before you do that, you might consider adjusting this template to your needs, as explained in the next section.
-
 ## Quickstart: remote
 
 This instructions are for the following scenario: your files and credentials are on a remote **host** machine (such as an AWS server, desktop workstation), and the only use of your **local** machine is to connect to the host. It is required that you have **the same username** on both local and host machine.
 
-> The same username is required, it will be used in the name of docker compose project, as well as the docker image. This enables multiple users on the same machine to use development containers, as each user will have a separate container running.
+> The same username is required, because it will be used in the name of docker compose project, as well as the docker image. This enables multiple users on the same machine to use development containers without interfering with each other, as they will all have a separate compose project/docker image.
 
 First, you need to set the `docker.host` setting in VSCode on your local machine to point at your host machine - see [here](https://code.visualstudio.com/docs/remote/containers-advanced#_a-basic-remote-example) for instructions. Next, you need to execute the following on both the local and host machine from the root of your repository (this you have to do just once in the lifecycle of the project)
 
