@@ -15,5 +15,5 @@ services:
       - ..:/ws
     environment:
       - TOKENIZERS_PARALLELISM=true
-      - WANDB_LOG_CONSOLE=off
+      - WANDB_CONSOLE=off
     command: /bin/sh -c "while sleep 1000; do :; done"
