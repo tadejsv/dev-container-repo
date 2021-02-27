@@ -19,9 +19,9 @@ SHELL ["/bin/bash", "-c"]
 # Install all system stuff, including node
 COPY sys_requirements.txt /tmp
 ARG DEBIAN_FRONTEND="noninteractive"
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt update && apt install -y --no-install-recommends \
     $(cat tmp/sys_requirements.txt) && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt clean && rm -rf /var/lib/apt/lists/*
 
 # Create the sudo user
 ARG USERNAME
